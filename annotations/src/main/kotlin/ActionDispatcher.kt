@@ -7,7 +7,7 @@ import kotlin.reflect.KClass
 @MustBeDocumented
 annotation class ActionDispatcher(
   val state: KClass<*>,
-  val prefix: String = "process",
-  val receiverName: String = "ActionReceiver",
+  val prefix: String = "",
+  val receiverName: String = "",
   val receiver: KClass<*> = Nothing::class
 )
