@@ -2,12 +2,11 @@ package ru.rougsig.actionsdispatcher.processor
 
 import asTypeElement
 import com.google.auto.service.AutoService
+import com.squareup.kotlinpoet.*
 import ru.rougsig.actionsdispatcher.annotations.ActionDispatcher
-import ru.rougsig.actionsdispatcher.utils.enclosedMethods
-import ru.rougsig.actionsdispatcher.utils.enclosingPackage
-import ru.rougsig.actionsdispatcher.utils.getAnnotationMirror
-import ru.rougsig.actionsdispatcher.utils.getFieldByName
+import ru.rougsig.actionsdispatcher.utils.*
 import superclass
+import java.io.File
 import javax.annotation.processing.*
 import javax.annotation.processing.Processor
 import javax.lang.model.SourceVersion
@@ -49,7 +48,7 @@ class Processor : AbstractProcessor() {
 
     elements.forEach { targetElement ->
       val targetTypeElement = targetElement as TypeElement
-      val actionReceiver = getActionReceiverInstance(targetElement)
+      val actionReceiverTypeName = getActionReceiverTypeName(targetElement)
     }
 
     return true
@@ -61,21 +60,43 @@ class Processor : AbstractProcessor() {
       .filter { it.superclass.toString() == targetElement.qualifiedName.toString() }
   }
 
-  private fun getActionReceiverInstance(targetElement: TypeElement): TypeElement {
+  private fun getActionReceiverTypeName(targetElement: TypeElement): TypeName {
     val funPrefix = getElementPrefix(targetElement)
     val receiverName = getElementReceiverName(targetElement)
     val allActions = getAllActions(targetElement)
 
-    val isCustomReceiverClass = getReceiverClass(targetElement) != null
-    return if (isCustomReceiverClass) {
-      val receiverElement = getReceiverElement(targetElement)!!
+    val receiverElement = getReceiverElement(targetElement)
+    return if (receiverElement != null) {
       getValidCustomReceiver(receiverElement, targetElement, allActions)
-      receiverElement
+      receiverElement.asType().asTypeName()
     } else {
-      // TODO generateActionReceiver(funPrefix, receiverName, allActions)
-
-      targetElement
+      generateActionReceiver(targetElement, receiverName, funPrefix, allActions)
     }
+  }
+
+  private fun generateActionReceiver(targetElement: TypeElement, receiverName: String, funPrefix: String, allActions: List<TypeElement>): TypeName {
+    val packageName = targetElement.enclosingPackageName
+    val stateTypeName = getStateTypeName(targetElement)
+    val actionTypeName = getActionTypeName(targetElement)
+    val stateActionPairTypeName = getStateActionPairTypeName(targetElement)
+
+    val file = FileSpec.builder(packageName, receiverName)
+      .addType(TypeSpec.interfaceBuilder(receiverName)
+        .addFunctions(allActions.map { elem ->
+          FunSpec.builder("$funPrefix${elem.simpleName}")
+            .addModifiers(KModifier.ABSTRACT)
+            .addParameter(PREVIOUS_STATE_PARAMETER_NAME, stateTypeName)
+            .addParameter(ACTION_PARAMETER_NAME, actionTypeName)
+            .returns(stateActionPairTypeName)
+            .build()
+        })
+        .build())
+      .build()
+
+    val kaptKotlinGeneratedDir = processingEnv.options[KAPT_KOTLIN_GENERATED_OPTION_NAME]
+    file.writeTo(File(kaptKotlinGeneratedDir, "$receiverName.kt"))
+
+    return ClassName.bestGuess("$packageName.$receiverName")
   }
 
   private fun getValidCustomReceiver(receiverElement: TypeElement, targetElement: TypeElement, allActions: List<TypeElement>) {
@@ -114,9 +135,26 @@ class Processor : AbstractProcessor() {
       ?: RECEIVER_NAME_DEFAULT_VALUE
   }
 
-  private fun getReceiverClass(targetElement: TypeElement): KClass<*>? {
-    return targetElement.getAnnotation(ActionDispatcher::class.java).receiver
-      .takeIf { it.jvmName != Nothing::class.jvmName }
+  private fun getStateElement(targetElement: TypeElement): TypeElement {
+    val annotation = targetElement.getAnnotationMirror(ActionDispatcher::class)
+      ?: throw IllegalArgumentException("State must by provided")
+    val receiverValue = annotation.getFieldByName("state")
+    val receiverTypeMirror = receiverValue!!.value as TypeMirror
+    return processingEnv.typeUtils.asElement(receiverTypeMirror) as TypeElement
+  }
+
+  private fun getStateTypeName(targetElement: TypeElement): TypeName {
+    return getStateElement(targetElement).asType().asTypeName()
+  }
+
+  private fun getActionTypeName(targetElement: TypeElement): TypeName {
+    return targetElement.asType().asTypeName()
+  }
+
+  private fun getStateActionPairTypeName(targetElement: TypeElement): TypeName {
+    val stateTypeName = getStateTypeName(targetElement)
+    val actionTypeName = getActionTypeName(targetElement)
+    return ParameterizedTypeName.get(Pair::class.asClassName(), stateTypeName, actionTypeName.asNullable())
   }
 }
 
@@ -124,3 +162,6 @@ private const val RECEIVER_FIELD_NAME = "receiver"
 
 private const val ELEMENT_PREFIX_DEFAULT_VALUE = "process"
 private const val RECEIVER_NAME_DEFAULT_VALUE = "ActionReceiver"
+
+private const val PREVIOUS_STATE_PARAMETER_NAME = "previousState"
+private const val ACTION_PARAMETER_NAME = "action"
