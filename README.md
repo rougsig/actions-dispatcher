@@ -1,1 +1,1 @@
-# actions-dispatcher
+# Actions dispatcher
