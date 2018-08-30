@@ -61,17 +61,38 @@ class Processor : AbstractProcessor() {
     funByAction: Map<String, String>,
     receiverName: TypeName
   ) {
-    val stateName = getStateTypeName(targetElement)
     val packageName = targetElement.enclosingPackageName
     val stateTypeName = getStateTypeName(targetElement)
     val actionTypeName = getActionTypeName(targetElement)
     val stateActionPair = getStateNullableActionPairTypeName(targetElement)
 
-    val fileName = DISPATCHER_NAME_DEFAULT_VALUE
+    val fileName = getDispatcherName(targetElement)
     val file = FileSpec.builder(packageName, fileName)
       .addType(TypeSpec.classBuilder(fileName)
         .primaryConstructor(FunSpec.constructorBuilder()
+          .addModifiers(KModifier.PRIVATE)
           .addParameter(RECEIVER_PARAMETER_NAME, receiverName)
+          .build())
+        .addType(TypeSpec.classBuilder(BUILDER_CLASS_NAME)
+          .addProperty(PropertySpec.varBuilder(BUILDER_PARAMETER_RECEIVER, receiverName.asNullable(), KModifier.PRIVATE)
+            .initializer("null")
+            .build())
+          .addFunction(FunSpec.builder(BUILDER_RECEIVER_SETTER)
+            .addParameter(BUILDER_PARAMETER_RECEIVER, receiverName)
+            .addStatement("this.%N = %N", BUILDER_PARAMETER_RECEIVER, BUILDER_PARAMETER_RECEIVER)
+            .addStatement("return this")
+            .returns(ClassName.bestGuess(BUILDER_CLASS_NAME))
+            .build())
+          .addFunction(FunSpec.builder("build")
+            .beginControlFlow("if (this.%N == null)", BUILDER_PARAMETER_RECEIVER)
+            .addStatement(
+              "throw %T(%S)",
+              IllegalStateException::class.java,
+              "no target specified, use $BUILDER_RECEIVER_SETTER Builder's method to set it")
+            .endControlFlow()
+            .addStatement("return %N(this.%N!!)", fileName, BUILDER_PARAMETER_RECEIVER)
+            .returns(ClassName.bestGuess(fileName))
+            .build())
           .build())
         .addProperty(PropertySpec.builder(RECEIVER_PARAMETER_NAME, receiverName, KModifier.PRIVATE)
           .initializer(RECEIVER_PARAMETER_NAME)
@@ -191,6 +212,12 @@ class Processor : AbstractProcessor() {
       ?: RECEIVER_NAME_DEFAULT_VALUE
   }
 
+  private fun getDispatcherName(targetElement: TypeElement): String {
+    return targetElement.getAnnotation(ActionDispatcher::class.java).dispatcherName
+      .takeIf { it.isNotBlank() }
+      ?: DISPATCHER_NAME_DEFAULT_VALUE
+  }
+
   private fun getStateElement(targetElement: TypeElement): TypeElement {
     val annotation = targetElement.getAnnotationMirror(ActionDispatcher::class)
       ?: throw IllegalArgumentException("State must by provided")
@@ -266,4 +293,8 @@ private const val DISPATCHER_NAME_DEFAULT_VALUE = "ActionsDispatcher"
 
 private const val PREVIOUS_STATE_PARAMETER_NAME = "previousState"
 private const val ACTION_PARAMETER_NAME = "action"
-private const val RECEIVER_PARAMETER_NAME = "target"
+private const val RECEIVER_PARAMETER_NAME = "receiver"
+
+private const val BUILDER_CLASS_NAME = "Builder"
+private const val BUILDER_RECEIVER_SETTER = "setReceiver"
+private const val BUILDER_PARAMETER_RECEIVER = "receiver"

@@ -2,7 +2,10 @@ package ru.rougsig.actionsdispatcher.sample
 
 import ru.rougsig.actionsdispatcher.annotations.ActionDispatcher
 
-@ActionDispatcher(state = State::class, receiver = MyActionReceiver::class)
+@ActionDispatcher(
+  state = State::class,
+  receiver = MyActionReceiver::class,
+  dispatcherName = "MyCustomActionsDispatcher")
 sealed class Action
 
 object A : Action()
