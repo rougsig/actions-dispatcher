@@ -10,7 +10,12 @@ object B : Action()
 object C : Action()
 object D : Action()
 
-interface MyActionReceiver
+interface MyActionReceiver {
+  fun a(a: A)
+  fun processB(b: B)
+  fun barC(c: C)
+  fun fooD(d: D)
+}
 
 class State
 
