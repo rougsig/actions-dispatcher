@@ -65,7 +65,7 @@ class Processor : AbstractProcessor() {
     val packageName = targetElement.enclosingPackageName
     val stateTypeName = getStateTypeName(targetElement)
     val actionTypeName = getActionTypeName(targetElement)
-    val stateActionPair = getStateActionPairTypeName(targetElement)
+    val stateActionPair = getStateNullableActionPairTypeName(targetElement)
 
     val fileName = DISPATCHER_NAME_DEFAULT_VALUE
     val file = FileSpec.builder(packageName, fileName)
@@ -120,7 +120,7 @@ class Processor : AbstractProcessor() {
     val packageName = targetElement.enclosingPackageName
     val stateTypeName = getStateTypeName(targetElement)
     val actionTypeName = getActionTypeName(targetElement)
-    val stateActionPairTypeName = getStateActionPairTypeName(targetElement)
+    val stateActionPairTypeName = getStateNullableActionPairTypeName(targetElement)
 
     val file = FileSpec.builder(packageName, receiverName)
       .addType(TypeSpec.interfaceBuilder(receiverName)
@@ -160,8 +160,22 @@ class Processor : AbstractProcessor() {
   }
 
   private fun getReceiverActions(targetElement: TypeElement, receiverElement: TypeElement): List<TypeElement> {
+    val stateTypeName = getStateTypeName(targetElement)
+    val actionTypeName = getActionTypeName(targetElement)
+    val stateActionPairTypeName = getStateActionPairTypeName(targetElement)
+
     return receiverElement.enclosedMethods
-      .flatMap { method -> method.parameters.filter { it.superclass.toString() == targetElement.qualifiedName.toString() } }
+      .filter { method -> method.parameters.any { it.superclass.toString() == targetElement.qualifiedName.toString() } }
+      .map { method ->
+        if (method.returnType.asTypeName() != stateActionPairTypeName)
+          throw IllegalStateException("returns type must be Pair<State, Action?>. Invalid fun `${method.simpleName}`")
+        if (method.parameters[0].asType().asTypeName() != stateTypeName)
+          throw IllegalStateException("first parameter must be State. Invalid fun `${method.simpleName}`")
+        if (method.parameters[1].superclass.asTypeName() != actionTypeName)
+          throw IllegalStateException("second parameter must be Action. Invalid fun `${method.simpleName}`")
+
+        method.parameters[1]
+      }
       .map { it.asTypeElement() }
   }
 
@@ -193,10 +207,16 @@ class Processor : AbstractProcessor() {
     return targetElement.asType().asTypeName()
   }
 
-  private fun getStateActionPairTypeName(targetElement: TypeElement): TypeName {
+  private fun getStateNullableActionPairTypeName(targetElement: TypeElement): TypeName {
     val stateTypeName = getStateTypeName(targetElement)
     val actionTypeName = getActionTypeName(targetElement)
     return ParameterizedTypeName.get(Pair::class.asClassName(), stateTypeName, actionTypeName.asNullable())
+  }
+
+  private fun getStateActionPairTypeName(targetElement: TypeElement): TypeName {
+    val stateTypeName = getStateTypeName(targetElement)
+    val actionTypeName = getActionTypeName(targetElement)
+    return ParameterizedTypeName.get(Pair::class.asClassName(), stateTypeName, actionTypeName)
   }
 
   private fun getFunByAction(targetElement: TypeElement, receiverElement: TypeElement?): Map<String, String> {

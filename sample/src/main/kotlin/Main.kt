@@ -2,7 +2,7 @@ package ru.rougsig.actionsdispatcher.sample
 
 import ru.rougsig.actionsdispatcher.annotations.ActionDispatcher
 
-@ActionDispatcher(state = State::class)
+@ActionDispatcher(state = State::class, receiver = MyActionReceiver::class)
 sealed class Action
 
 object A : Action()
@@ -11,10 +11,10 @@ object C : Action()
 object D : Action()
 
 interface MyActionReceiver {
-  fun a(a: A)
-  fun processB(b: B)
-  fun barC(c: C)
-  fun fooD(d: D)
+  fun a(s: State, a: A): Pair<State, Action?>
+  fun processB(s: State, b: B): Pair<State, Action?>
+  fun barC(s: State, c: C): Pair<State, Action?>
+  fun fooD(s: State, d: D): Pair<State, Action?>
 }
 
 class State
