@@ -12,7 +12,7 @@ object DislikeArticle : Action()
 object AddArticleToFavorite : Action()
 ```
 
-After you will get auto-generated `ActionReceiver` interface:
+After doing that you will get an auto-generated `ActionReceiver` interface:
 ```kotlin
 interface ActionReceiver {
     fun processAddArticleToFavorite(previousState: State, action: Action): Pair<State, Action?>
@@ -34,7 +34,7 @@ class ActionsDispatcher private constructor(private val receiver: ActionReceiver
 }
 ```
 
-All you have to do after you add annotation is to use a generated builder to create this dispatcher for you and implement receiver:
+All you have to do after adding an annotation is to use a generated builder which will create this dispatcher for you and also you will need to implement a receiver:
 ```kotlin
 class MyPresenter : BasePresenter<State, View, Action>(), ActionReceiver {
     private val actionsDispatcher = ActionsDispatcher.Builder()
@@ -64,14 +64,14 @@ class MyPresenter : BasePresenter<State, View, Action>(), ActionReceiver {
 ```
 
 # Custom Receiver
-If you don't like auto-generated receiver you can provide it to dispatcher.
+If you don't like auto-generated receiver you can specify its interface manually.
 
 Interface requirements:
 1. Process all actions
 2. Have only two parameters in this order: `state, action`
 3. Your functions must return Pair<State, Action>
 
-For providing annotation, add parameter to annotation:
+Configure processor to use this interface by adding a parameter to annotation:
 ```kotlin
 @ActionDispatcher(state = State::class, receiver = MyActionReceiver::class)
 sealed class Action
