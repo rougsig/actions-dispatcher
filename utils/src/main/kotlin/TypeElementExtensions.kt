@@ -1,4 +1,4 @@
-package ru.rougsig.actionsdispatcher.utils
+package com.github.rougsig.actionsdispatcher.utils
 
 import javax.lang.model.element.*
 import kotlin.reflect.KClass

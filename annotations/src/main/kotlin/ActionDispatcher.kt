@@ -1,4 +1,4 @@
-package ru.rougsig.actionsdispatcher.annotations
+package com.github.rougsig.actionsdispatcher.annotations
 
 import kotlin.reflect.KClass
 

@@ -1,6 +1,6 @@
-package ru.rougsig.actionsdispatcher.sample
+package com.github.rougsig.actionsdispatcher.sample
 
-import ru.rougsig.actionsdispatcher.annotations.ActionDispatcher
+import com.github.rougsig.actionsdispatcher.annotations.ActionDispatcher
 
 @ActionDispatcher(
   state = State::class,

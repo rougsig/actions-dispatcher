@@ -1,11 +1,11 @@
-package ru.rougsig.actionsdispatcher.processor
+package com.github.rougsig.actionsdispatcher.processor
 
-import ru.rougsig.actionsdispatcher.utils.asTypeElement
+import com.github.rougsig.actionsdispatcher.utils.asTypeElement
 import com.google.auto.service.AutoService
 import com.squareup.kotlinpoet.*
-import ru.rougsig.actionsdispatcher.annotations.ActionDispatcher
-import ru.rougsig.actionsdispatcher.utils.*
-import ru.rougsig.actionsdispatcher.utils.superclass
+import com.github.rougsig.actionsdispatcher.annotations.ActionDispatcher
+import com.github.rougsig.actionsdispatcher.utils.*
+import com.github.rougsig.actionsdispatcher.utils.superclass
 import java.io.File
 import javax.annotation.processing.*
 import javax.annotation.processing.Processor

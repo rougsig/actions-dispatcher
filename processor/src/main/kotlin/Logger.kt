@@ -1,4 +1,4 @@
-package ru.rougsig.actionsdispatcher.processor
+package com.github.rougsig.actionsdispatcher.processor
 
 import javax.annotation.processing.Messager
 import javax.tools.Diagnostic

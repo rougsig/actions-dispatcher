@@ -1,6 +1,6 @@
 apply plugin: 'kotlin'
 
-group 'ru.rougsig.actionsdispatcher'
+group 'com.github.rougsig.actionsdispatcher'
 version '1.0'
 
 buildscript {
