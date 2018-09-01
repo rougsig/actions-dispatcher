@@ -140,7 +140,6 @@ class Processor : AbstractProcessor() {
   private fun generateActionReceiver(targetElement: TypeElement, receiverName: String, funPrefix: String, allActions: List<TypeElement>): TypeName {
     val packageName = targetElement.enclosingPackageName
     val stateTypeName = getStateTypeName(targetElement)
-    val actionTypeName = getActionTypeName(targetElement)
     val stateActionPairTypeName = getStateNullableActionPairTypeName(targetElement)
 
     val file = FileSpec.builder(packageName, receiverName)
@@ -149,7 +148,7 @@ class Processor : AbstractProcessor() {
           FunSpec.builder("$funPrefix${elem.simpleName}")
             .addModifiers(KModifier.ABSTRACT)
             .addParameter(PREVIOUS_STATE_PARAMETER_NAME, stateTypeName)
-            .addParameter(ACTION_PARAMETER_NAME, actionTypeName)
+            .addParameter(ACTION_PARAMETER_NAME, elem.asType().asTypeName())
             .returns(stateActionPairTypeName)
             .build()
         })
