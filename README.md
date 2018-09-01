@@ -15,17 +15,17 @@ object AddArticleToFavorite : Action()
 After doing that you will get an auto-generated `ActionReceiver` interface:
 ```kotlin
 interface ActionReceiver {
-    fun processAddArticleToFavorite(previousState: State, action: Action): Pair<State, Action?>
-    fun processDislikeArticle(previousState: State, action: Action): Pair<State, Action?>
-    fun processLikeArticle(previousState: State, action: Action): Pair<State, Action?>
-    fun processOpenArticleDetail(previousState: State, action: Action): Pair<State, Action?>
+    fun processAddArticleToFavorite(previousState: State, action: Action): Pair<State, Function0<Action>?>
+    fun processDislikeArticle(previousState: State, action: Action): Pair<State, Function0<Action>?>
+    fun processLikeArticle(previousState: State, action: Action): Pair<State, Function0<Action>?>
+    fun processOpenArticleDetail(previousState: State, action: Action): Pair<State, Function0<Action>?>
 }
 ```
 
 And `ActionsDispatcher` with dispatch function:
 ```kotlin
 class ActionsDispatcher private constructor(private val receiver: ActionReceiver) {
-    fun dispatch(previousState: State, action: Action): Pair<State, Action?> = when (action) {
+    fun dispatch(previousState: State, action: Action): Pair<State, Function0<Action>?> = when (action) {
         is DislikeArticle -> receiver.processDislikeArticle(previousState, action)
         is OpenArticleDetail -> receiver.processOpenArticleDetail(previousState, action)
         is AddArticleToFavorite -> receiver.processAddArticleToFavorite(previousState, action)
@@ -45,19 +45,19 @@ class MyPresenter : BasePresenter<State, View, Action>(), ActionReceiver {
         actionsDispatcher.dispatch(previusState, action)
     }
 
-    overrid fun processAddArticleToFavorite(previousState: State, action: Action): Pair<State, Action?> {
+    overrid fun processAddArticleToFavorite(previousState: State, action: Action): Pair<State, Function0<Action>?> {
         // process add article to favorite
     }
 
-    overrid fun processDislikeArticle(previousState: State, action: Action): Pair<State, Action?> {
+    overrid fun processDislikeArticle(previousState: State, action: Action): Pair<State, Function0<Action>?> {
         // process dislike article
     }
 
-    overrid fun processLikeArticle(previousState: State, action: Action): Pair<State, Action?> {
+    overrid fun processLikeArticle(previousState: State, action: Action): Pair<State, Function0<Action>?> {
          // process like article
     }
 
-    overrid fun processOpenArticleDetail(previousState: State, action: Action): Pair<State, Action?> {
+    overrid fun processOpenArticleDetail(previousState: State, action: Action): Pair<State, Function0<Action>?> {
          // process open details article
     }
 }
@@ -82,9 +82,47 @@ object DislikeArticle : Action()
 object AddArticleToFavorite : Action()
 
 interface MyActionReceiver {
-  fun open(s: State, a: OpenArticleDetail): Pair<State, Action?>
-  fun like(s: State, b: LikeArticle): Pair<State, Action?>
-  fun dislike(s: State, c: DislikeArticle): Pair<State, Action?>
-  fun favorite(s: State, d: AddArticleToFavorite): Pair<State, Action?>
+  fun open(s: State, a: OpenArticleDetail): Pair<State, Function0<Action>?>
+  fun like(s: State, b: LikeArticle): Pair<State, Function0<Action>?>
+  fun dislike(s: State, c: DislikeArticle): Pair<State, Function0<Action>?>
+  fun favorite(s: State, d: AddArticleToFavorite): Pair<State, Function0<Action>?>
+}
+```
+
+# Custom Command
+If you don't like default command you can specify its interface manually.
+
+Configure processor to use this interface by adding a parameter to annotation:
+```kotlin
+class Command : Date()
+
+@ActionDispatcher(state = State::class, command = Command::class)
+sealed class Action
+
+object OpenArticleDetail : Action()
+object LikeArticle : Action()
+object DislikeArticle : Action()
+object AddArticleToFavorite : Action()
+```
+
+After doing that you will get an auto-generated `ActionReceiver` interface:
+```kotlin
+interface ActionReceiver {
+    fun processAddArticleToFavorite(previousState: State, action: Action): Pair<State, Command?>
+    fun processDislikeArticle(previousState: State, action: Action): Pair<State, Command?>
+    fun processLikeArticle(previousState: State, action: Action): Pair<State, Command?>
+    fun processOpenArticleDetail(previousState: State, action: Action): Pair<State, Command?>
+}
+```
+
+And `ActionsDispatcher` with dispatch function:
+```kotlin
+class ActionsDispatcher private constructor(private val receiver: ActionReceiver) {
+    fun dispatch(previousState: State, action: Action): Pair<State, Command?> = when (action) {
+        is DislikeArticle -> receiver.processDislikeArticle(previousState, action)
+        is OpenArticleDetail -> receiver.processOpenArticleDetail(previousState, action)
+        is AddArticleToFavorite -> receiver.processAddArticleToFavorite(previousState, action)
+        is LikeArticle -> receiver.processLikeArticle(previousState, action)
+    }
 }
 ```
