@@ -47,19 +47,19 @@ class MyPresenter : BasePresenter<State, View, Action>(), ActionReceiver {
         actionsDispatcher.dispatch(previusState, action)
     }
 
-    overrid fun processAddArticleToFavorite(previousState: State, action: Action): Pair<State, Function0<Action>?> {
+    override fun processAddArticleToFavorite(previousState: State, action: Action): Pair<State, Function0<Action>?> {
         // process add article to favorite
     }
 
-    overrid fun processDislikeArticle(previousState: State, action: Action): Pair<State, Function0<Action>?> {
+    override fun processDislikeArticle(previousState: State, action: Action): Pair<State, Function0<Action>?> {
         // process dislike article
     }
 
-    overrid fun processLikeArticle(previousState: State, action: Action): Pair<State, Function0<Action>?> {
+    override fun processLikeArticle(previousState: State, action: Action): Pair<State, Function0<Action>?> {
          // process like article
     }
 
-    overrid fun processOpenArticleDetail(previousState: State, action: Action): Pair<State, Function0<Action>?> {
+    override fun processOpenArticleDetail(previousState: State, action: Action): Pair<State, Function0<Action>?> {
          // process open details article
     }
 }
