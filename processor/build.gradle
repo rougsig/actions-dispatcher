@@ -9,8 +9,10 @@ dependencies {
     implementation project(':annotations')
     implementation project(':utils')
 
-    compile "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
-    compile 'com.squareup:kotlinpoet:0.7.0'
-    compile "com.google.auto.service:auto-service:1.0-rc2"
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
+    implementation 'com.squareup:kotlinpoet:0.7.0'
+    implementation "com.google.auto.service:auto-service:1.0-rc2"
     kapt "com.google.auto.service:auto-service:1.0-rc2"
 }
+
+apply from: '../gradle/gradle-mvn-push.gradle'

@@ -1,6 +1,4 @@
-rootProject.name = 'actions-dispatcher'
 include 'utils'
 include 'sample'
 include 'processor'
 include 'annotations'
-
