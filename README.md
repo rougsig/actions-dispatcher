@@ -3,6 +3,8 @@
 # Example
 To enable generation, annotate action class with `@ActionDispatcher` annotation:
 ```kotlin
+class State
+
 @ActionDispatcher(state = State::class)
 sealed class Action
 
@@ -15,10 +17,10 @@ object AddArticleToFavorite : Action()
 After doing that you will get an auto-generated `ActionReceiver` interface:
 ```kotlin
 interface ActionReceiver {
-    fun processAddArticleToFavorite(previousState: State, action: Action): Pair<State, Function0<Action>?>
-    fun processDislikeArticle(previousState: State, action: Action): Pair<State, Function0<Action>?>
-    fun processLikeArticle(previousState: State, action: Action): Pair<State, Function0<Action>?>
-    fun processOpenArticleDetail(previousState: State, action: Action): Pair<State, Function0<Action>?>
+    fun processAddArticleToFavorite(previousState: State, action: AddArticleToFavorite): Pair<State, Function0<Action>?>
+    fun processDislikeArticle(previousState: State, action: DislikeArticle): Pair<State, Function0<Action>?>
+    fun processLikeArticle(previousState: State, action: LikeArticle): Pair<State, Function0<Action>?>
+    fun processOpenArticleDetail(previousState: State, action: OpenArticleDetail): Pair<State, Function0<Action>?>
 }
 ```
 
@@ -69,7 +71,7 @@ If you don't like auto-generated receiver you can specify its interface manually
 Interface requirements:
 1. Process all actions
 2. Have only two parameters in this order: `state, action`
-3. Your functions must return Pair<State, Action>
+3. Your functions must return Pair<State, Function0<Action>?> // or Pair<State, Function0<Action>> or Pair<State, Command>
 
 Configure processor to use this interface by adding a parameter to annotation:
 ```kotlin
