@@ -103,6 +103,7 @@ object OpenArticleDetail : Action()
 object LikeArticle : Action()
 object DislikeArticle : Action()
 object AddArticleToFavorite : Action()
+```
 
 After doing that you will get an auto-generated `ActionReceiver` interface:
 ```kotlin
