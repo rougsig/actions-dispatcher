@@ -2,22 +2,21 @@ package com.github.rougsig.actionsdispatcher.sample
 
 import com.github.rougsig.actionsdispatcher.annotations.ActionDispatcher
 
+class Command : Function<String>
+
 @ActionDispatcher(
   state = State::class,
   receiver = MyActionReceiver::class,
-  dispatcherName = "MyCustomActionsDispatcher")
+  dispatcherName = "MyCustomActionsDispatcher",
+  command = Command::class)
 sealed class Action
 
 object A : Action()
 object B : Action()
-object C : Action()
-object D : Action()
 
 interface MyActionReceiver {
-  fun a(s: State, a: A): Pair<State, Action?>
-  fun processB(s: State, b: B): Pair<State, Action?>
-  fun barC(s: State, c: C): Pair<State, Action?>
-  fun fooD(s: State, d: D): Pair<State, Action?>
+  fun a(s: State, a: A): Pair<State, Command?>
+  fun processB(s: State, b: B): Pair<State, Command>
 }
 
 class State

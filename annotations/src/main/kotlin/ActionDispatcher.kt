@@ -10,5 +10,6 @@ annotation class ActionDispatcher(
   val prefix: String = "",
   val receiverName: String = "",
   val dispatcherName: String = "",
-  val receiver: KClass<*> = Nothing::class
+  val receiver: KClass<*> = Nothing::class,
+  val command: KClass<*> = Nothing::class
 )

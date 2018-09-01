@@ -183,17 +183,17 @@ class Processor : AbstractProcessor() {
   private fun getReceiverActions(targetElement: TypeElement, receiverElement: TypeElement): List<TypeElement> {
     val stateTypeName = getStateTypeName(targetElement)
     val actionTypeName = getActionTypeName(targetElement)
-    val stateActionPairTypeName = getStateActionPairTypeName(targetElement)
+    val stateActionPairTypeName = getStateCommandPairTypeName(targetElement)
 
     return receiverElement.enclosedMethods
       .filter { method -> method.parameters.any { it.superclass.toString() == targetElement.qualifiedName.toString() } }
       .map { method ->
-        if (method.returnType.asTypeName() != stateActionPairTypeName)
-          throw IllegalStateException("returns type must be Pair<State, Action?>. Invalid fun `${method.simpleName}`")
+        if (method.returnType.asTypeName().toString().replace(".jvm.functions", "") != stateActionPairTypeName.toString())
+          throw IllegalStateException("returns type must be $stateActionPairTypeName. Invalid fun `${method.simpleName}`")
         if (method.parameters[0].asType().asTypeName() != stateTypeName)
-          throw IllegalStateException("first parameter must be State. Invalid fun `${method.simpleName}`")
+          throw IllegalStateException("first parameter must be $stateTypeName. Invalid fun `${method.simpleName}`")
         if (method.parameters[1].superclass.asTypeName() != actionTypeName)
-          throw IllegalStateException("second parameter must be Action. Invalid fun `${method.simpleName}`")
+          throw IllegalStateException("second parameter must be $actionTypeName. Invalid fun `${method.simpleName}`")
 
         method.parameters[1]
       }
@@ -221,7 +221,7 @@ class Processor : AbstractProcessor() {
   private fun getStateElement(targetElement: TypeElement): TypeElement {
     val annotation = targetElement.getAnnotationMirror(ActionDispatcher::class)
       ?: throw IllegalArgumentException("State must by provided")
-    val receiverValue = annotation.getFieldByName("state")
+    val receiverValue = annotation.getFieldByName(ANNOTATION_STATE_FIELD_NAME)
     val receiverTypeMirror = receiverValue!!.value as TypeMirror
     return processingEnv.typeUtils.asElement(receiverTypeMirror) as TypeElement
   }
@@ -230,20 +230,28 @@ class Processor : AbstractProcessor() {
     return getStateElement(targetElement).asType().asTypeName()
   }
 
+  private fun getCommandTypeName(targetElement: TypeElement): TypeName {
+    val annotation = targetElement.getAnnotationMirror(ActionDispatcher::class)
+    val receiverValue = annotation!!.getFieldByName(ANNOTATION_COMMAND_FIELD_NAME)
+    val receiverTypeMirror = (receiverValue?.value as? TypeMirror)
+      ?: return ParameterizedTypeName.get(Function0::class.asClassName(), getActionTypeName(targetElement))
+    return (processingEnv.typeUtils.asElement(receiverTypeMirror) as TypeElement).asType().asTypeName()
+  }
+
   private fun getActionTypeName(targetElement: TypeElement): TypeName {
     return targetElement.asType().asTypeName()
   }
 
   private fun getStateNullableActionPairTypeName(targetElement: TypeElement): TypeName {
     val stateTypeName = getStateTypeName(targetElement)
-    val actionTypeName = getActionTypeName(targetElement)
-    return ParameterizedTypeName.get(Pair::class.asClassName(), stateTypeName, actionTypeName.asNullable())
+    val commandTypeName = getCommandTypeName(targetElement)
+    return ParameterizedTypeName.get(Pair::class.asClassName(), stateTypeName, commandTypeName.asNullable())
   }
 
-  private fun getStateActionPairTypeName(targetElement: TypeElement): TypeName {
+  private fun getStateCommandPairTypeName(targetElement: TypeElement): TypeName {
     val stateTypeName = getStateTypeName(targetElement)
-    val actionTypeName = getActionTypeName(targetElement)
-    return ParameterizedTypeName.get(Pair::class.asClassName(), stateTypeName, actionTypeName)
+    val commandTypeName = getCommandTypeName(targetElement)
+    return ParameterizedTypeName.get(Pair::class.asClassName(), stateTypeName, commandTypeName)
   }
 
   private fun getFunByAction(targetElement: TypeElement, receiverElement: TypeElement?): Map<String, String> {
@@ -286,6 +294,8 @@ class Processor : AbstractProcessor() {
 }
 
 private const val ANNOTATION_RECEIVER_FIELD_NAME = "receiver"
+private const val ANNOTATION_STATE_FIELD_NAME = "state"
+private const val ANNOTATION_COMMAND_FIELD_NAME = "command"
 
 private const val ELEMENT_PREFIX_DEFAULT_VALUE = "process"
 private const val RECEIVER_NAME_DEFAULT_VALUE = "ActionReceiver"
