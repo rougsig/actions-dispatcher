@@ -128,3 +128,18 @@ class ActionsDispatcher private constructor(private val receiver: ActionReceiver
     }
 }
 ```
+
+# Download
+
+Add a Gradle dependency:
+
+```gradle
+apply plugin: 'kotlin-kapt'
+
+dependencies {
+    maven { url 'https://oss.sonatype.org/content/repositories/snapshots' }
+}
+
+implementation 'com.github.rougsig:actions-dispatcher-annotations:1.0.1-SNAPSHOT'
+kapt 'com.github.rougsig:actions-dispatcher-processor:1.0.1-SNAPSHOT'
+```
