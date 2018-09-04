@@ -1,4 +1,4 @@
-package com.github.rougsig.actionsdispatcher.utils
+package com.github.rougsig.actionsdispatcher.processor.utils
 
 import javax.lang.model.element.Element
 import javax.lang.model.element.TypeElement

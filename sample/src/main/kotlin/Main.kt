@@ -1,16 +1,30 @@
 package com.github.rougsig.actionsdispatcher.sample
 
-import com.github.rougsig.actionsdispatcher.annotations.ActionDispatcher
+import com.github.rougsig.actionsdispatcher.annotations.ActionElement
+import java.util.*
 
-@ActionDispatcher(state = State::class)
-sealed class Action
+@ActionElement(state = State::class)
+internal sealed class Action
 
-object OpenArticleDetail : Action()
-object LikeArticle : Action()
-object DislikeArticle : Action()
-object AddArticleToFavorite : Action()
+internal object OpenArticleDetail : Action()
+internal object LikeArticle : Action()
+internal object DislikeArticle : Action()
+internal object AddArticleToFavorite : Action()
+
+internal interface MyActionReceiver {
+  fun open(s: State, a: OpenArticleDetail): Pair<State, Function0<Action>?>
+  fun like(s: State, b: LikeArticle): Pair<State, Function0<Action>?>
+  fun dislike(s: State, c: DislikeArticle): Pair<State, Function0<Action>?>
+  fun favorite(s: State, d: AddArticleToFavorite): Pair<State, Function0<Action>?>
+}
 
 class State
 
+typealias Command<T> = () -> T?
+
 fun main(args: Array<String>) {
+  lateinit var a: Pair<State, Function0<Action>?>
+
+  a = State() to { OpenArticleDetail }
 }
+
