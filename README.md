@@ -17,17 +17,17 @@ object AddArticleToFavorite : Action()
 After doing that you will get an auto-generated `ActionReceiver` interface:
 ```kotlin
 interface ActionReceiver {
-    fun processAddArticleToFavorite(previousState: State, action: AddArticleToFavorite): Pair<State, Function0<Action>?>
-    fun processDislikeArticle(previousState: State, action: DislikeArticle): Pair<State, Function0<Action>?>
-    fun processLikeArticle(previousState: State, action: LikeArticle): Pair<State, Function0<Action>?>
-    fun processOpenArticleDetail(previousState: State, action: OpenArticleDetail): Pair<State, Function0<Action>?>
+    fun processAddArticleToFavorite(previousState: State, action: AddArticleToFavorite): Pair<State, Function0<Action?>?>
+    fun processDislikeArticle(previousState: State, action: DislikeArticle): Pair<State, Function0<Action?>?>
+    fun processLikeArticle(previousState: State, action: LikeArticle): Pair<State, Function0<Action?>?>
+    fun processOpenArticleDetail(previousState: State, action: OpenArticleDetail): Pair<State, Function0<Action?>?>
 }
 ```
 
 And `ActionsDispatcher` with dispatch function:
 ```kotlin
 class ActionsDispatcher private constructor(private val receiver: ActionReceiver) {
-    fun dispatch(previousState: State, action: Action): Pair<State, Function0<Action>?> = when (action) {
+    fun dispatch(previousState: State, action: Action): Pair<State, Function0<Action?>?> = when (action) {
         is DislikeArticle -> receiver.processDislikeArticle(previousState, action)
         is OpenArticleDetail -> receiver.processOpenArticleDetail(previousState, action)
         is AddArticleToFavorite -> receiver.processAddArticleToFavorite(previousState, action)
@@ -47,19 +47,19 @@ class MyPresenter : BasePresenter<State, View, Action>(), ActionReceiver {
         actionsDispatcher.dispatch(previusState, action)
     }
 
-    override fun processAddArticleToFavorite(previousState: State, action: Action): Pair<State, Function0<Action>?> {
+    override fun processAddArticleToFavorite(previousState: State, action: Action): Pair<State, Function0<Action?>?> {
         // process add article to favorite
     }
 
-    override fun processDislikeArticle(previousState: State, action: Action): Pair<State, Function0<Action>?> {
+    override fun processDislikeArticle(previousState: State, action: Action): Pair<State, Function0<Action?>?> {
         // process dislike article
     }
 
-    override fun processLikeArticle(previousState: State, action: Action): Pair<State, Function0<Action>?> {
+    override fun processLikeArticle(previousState: State, action: Action): Pair<State, Function0<Action?>?> {
          // process like article
     }
 
-    override fun processOpenArticleDetail(previousState: State, action: Action): Pair<State, Function0<Action>?> {
+    override fun processOpenArticleDetail(previousState: State, action: Action): Pair<State, Function0<Action?>?> {
          // process open details article
     }
 }
@@ -71,7 +71,7 @@ If you don't like auto-generated receiver you can specify its interface manually
 Interface requirements:
 1. Process all actions
 2. Have only two parameters in this order: `state, action`
-3. Your functions must return Pair<State, Function0<Action>?> // or Pair<State, Function0<Action>> or Pair<State, Command>
+3. Your functions must return Pair<State, Function0<Action?>?> // or Pair<State, Function0<Action?>> or Pair<State, Command>
 
 Configure processor to use this interface by adding a parameter to annotation:
 ```kotlin
@@ -84,10 +84,10 @@ object DislikeArticle : Action()
 object AddArticleToFavorite : Action()
 
 interface MyActionReceiver {
-  fun open(s: State, a: OpenArticleDetail): Pair<State, Function0<Action>?>
-  fun like(s: State, b: LikeArticle): Pair<State, Function0<Action>?>
-  fun dislike(s: State, c: DislikeArticle): Pair<State, Function0<Action>?>
-  fun favorite(s: State, d: AddArticleToFavorite): Pair<State, Function0<Action>?>
+  fun open(s: State, a: OpenArticleDetail): Pair<State, Function0<Action?>?>
+  fun like(s: State, b: LikeArticle): Pair<State, Function0<Action?>?>
+  fun dislike(s: State, c: DislikeArticle): Pair<State, Function0<Action?>?>
+  fun favorite(s: State, d: AddArticleToFavorite): Pair<State, Function0<Action?>?>
 }
 ```
 
