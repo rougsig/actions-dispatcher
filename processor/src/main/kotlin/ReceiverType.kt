@@ -1,16 +1,7 @@
 package com.github.rougsig.actionsdispatcher.processor
 
-import com.github.rougsig.actionsdispatcher.annotations.ActionElement
 import com.github.rougsig.actionsdispatcher.processor.utils.Logger
-import com.squareup.kotlinpoet.*
-import javax.lang.model.element.AnnotationMirror
-import javax.lang.model.element.AnnotationValue
-import javax.lang.model.element.ExecutableElement
 import javax.lang.model.element.TypeElement
-import javax.lang.model.type.TypeMirror
-import javax.lang.model.util.Elements
-import javax.lang.model.util.Types
-import kotlin.reflect.KClass
 
 internal abstract class ReceiverType(
   val simpleName: String,

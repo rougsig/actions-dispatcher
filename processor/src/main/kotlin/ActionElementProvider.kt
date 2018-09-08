@@ -1,7 +1,10 @@
 package com.github.rougsig.actionsdispatcher.processor
 
 import com.github.rougsig.actionsdispatcher.annotations.ActionElement
-import com.squareup.kotlinpoet.*
+import com.squareup.kotlinpoet.ParameterizedTypeName
+import com.squareup.kotlinpoet.TypeName
+import com.squareup.kotlinpoet.asClassName
+import com.squareup.kotlinpoet.asTypeName
 import javax.lang.model.element.AnnotationMirror
 import javax.lang.model.element.AnnotationValue
 import javax.lang.model.element.TypeElement

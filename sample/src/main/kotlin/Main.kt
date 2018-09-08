@@ -1,7 +1,6 @@
 package com.github.rougsig.actionsdispatcher.sample
 
 import com.github.rougsig.actionsdispatcher.annotations.ActionElement
-import java.util.*
 
 @ActionElement(state = State::class)
 internal sealed class Action

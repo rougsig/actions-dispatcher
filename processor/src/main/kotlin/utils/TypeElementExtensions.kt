@@ -1,7 +1,9 @@
 package com.github.rougsig.actionsdispatcher.processor.utils
 
-import kotlin.reflect.KClass
-import javax.lang.model.element.*
+import javax.lang.model.element.Element
+import javax.lang.model.element.ElementKind
+import javax.lang.model.element.ExecutableElement
+import javax.lang.model.element.PackageElement
 
 val Element.enclosedMethods: List<ExecutableElement>
   get() {

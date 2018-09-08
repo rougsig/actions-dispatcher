@@ -3,15 +3,14 @@ package com.github.rougsig.actionsdispatcher.processor
 import com.github.rougsig.actionsdispatcher.annotations.ActionElement
 import com.github.rougsig.actionsdispatcher.processor.utils.Logger
 import com.google.auto.service.AutoService
-import com.squareup.kotlinpoet.ClassName
 import com.squareup.kotlinpoet.TypeSpec
 import me.eugeniomarletti.kotlin.processing.KotlinAbstractProcessor
 import java.io.File
 import javax.annotation.processing.ProcessingEnvironment
+import javax.annotation.processing.Processor
 import javax.annotation.processing.RoundEnvironment
 import javax.lang.model.SourceVersion
 import javax.lang.model.element.TypeElement
-import javax.annotation.processing.Processor
 
 @AutoService(Processor::class)
 class Processor : KotlinAbstractProcessor() {

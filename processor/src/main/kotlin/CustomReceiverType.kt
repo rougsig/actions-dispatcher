@@ -1,12 +1,11 @@
 package com.github.rougsig.actionsdispatcher.processor
 
-import com.github.rougsig.actionsdispatcher.annotations.ActionElement
 import com.github.rougsig.actionsdispatcher.processor.utils.Logger
 import com.github.rougsig.actionsdispatcher.processor.utils.asTypeElement
 import com.github.rougsig.actionsdispatcher.processor.utils.enclosedMethods
 import com.github.rougsig.actionsdispatcher.processor.utils.superclass
-import com.squareup.kotlinpoet.*
-import javax.lang.model.element.ExecutableElement
+import com.squareup.kotlinpoet.asClassName
+import com.squareup.kotlinpoet.asTypeName
 import javax.lang.model.element.TypeElement
 
 internal class CustomReceiverType(
