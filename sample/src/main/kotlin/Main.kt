@@ -22,8 +22,7 @@ class State
 typealias Command<T> = () -> T?
 
 fun main(args: Array<String>) {
-  lateinit var a: Pair<State, Function0<Action>?>
-
-  a = State() to { OpenArticleDetail }
+  // TODO add sample
+  // Please see readme.md
 }
 
