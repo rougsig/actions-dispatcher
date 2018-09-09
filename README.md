@@ -1,11 +1,11 @@
 # Actions dispatcher
 
 # Example
-To enable generation, annotate action class with `@ActionDispatcher` annotation:
+To enable generation, annotate action class with `@ActionElement` annotation:
 ```kotlin
 class State
 
-@ActionDispatcher(state = State::class)
+@ActionElement(state = State::class)
 sealed class Action
 
 object OpenArticleDetail : Action()
@@ -24,10 +24,10 @@ interface ActionReceiver {
 }
 ```
 
-And `ActionsDispatcher` with dispatch function:
+And `ActionsReducer` with redcuce function:
 ```kotlin
-class ActionsDispatcher private constructor(private val receiver: ActionReceiver) {
-    fun dispatch(previousState: State, action: Action): Pair<State, Function0<Action?>?> = when (action) {
+class ActionsReducer private constructor(private val receiver: ActionReceiver) {
+    fun redcuce(previousState: State, action: Action): Pair<State, Function0<Action?>?> = when (action) {
         is DislikeArticle -> receiver.processDislikeArticle(previousState, action)
         is OpenArticleDetail -> receiver.processOpenArticleDetail(previousState, action)
         is AddArticleToFavorite -> receiver.processAddArticleToFavorite(previousState, action)
@@ -36,15 +36,15 @@ class ActionsDispatcher private constructor(private val receiver: ActionReceiver
 }
 ```
 
-All you have to do after adding an annotation is to use a generated builder which will create this dispatcher for you and also you will need to implement a receiver:
+All you have to do after adding an annotation is to use a generated builder which will create this redcucer for you and also you will need to implement a receiver:
 ```kotlin
 class MyPresenter : BasePresenter<State, View, Action>(), ActionReceiver {
-    private val actionsDispatcher = ActionsDispatcher.Builder()
-        .setReceiver(this) // <-- a class wich implements ActionReceiver and will receive dispatch calls
+    private val reducer = ActionsReducer.Builder()
+        .receiver(this) // <-- a class wich implements ActionReceiver and will receive redcuce calls
         .build()
 
-    fun dispatch(previusState: State, action: Action) {
-        actionsDispatcher.dispatch(previusState, action)
+    fun reduce(previusState: State, action: Action) {
+        reducer.redcuce(previusState, action)
     }
 
     override fun processAddArticleToFavorite(previousState: State, action: Action): Pair<State, Function0<Action?>?> {
@@ -75,7 +75,7 @@ Interface requirements:
 
 Configure processor to use this interface by adding a parameter to annotation:
 ```kotlin
-@ActionDispatcher(state = State::class, receiver = MyActionReceiver::class)
+@ActionsReducer(state = State::class, receiver = MyActionReceiver::class)
 sealed class Action
 
 object OpenArticleDetail : Action()
@@ -98,7 +98,7 @@ Configure processor to use this interface by adding a parameter to annotation:
 ```kotlin
 class Command : Date()
 
-@ActionDispatcher(state = State::class, command = Command::class)
+@ActionsReducer(state = State::class, command = Command::class)
 sealed class Action
 
 object OpenArticleDetail : Action()
@@ -117,10 +117,10 @@ interface ActionReceiver {
 }
 ```
 
-And `ActionsDispatcher` with dispatch function:
+And `ActionsReducer` with redcuce function:
 ```kotlin
-class ActionsDispatcher private constructor(private val receiver: ActionReceiver) {
-    fun dispatch(previousState: State, action: Action): Pair<State, Command?> = when (action) {
+class ActionsReducer private constructor(private val receiver: ActionReceiver) {
+    fun redcuce(previousState: State, action: Action): Pair<State, Command?> = when (action) {
         is DislikeArticle -> receiver.processDislikeArticle(previousState, action)
         is OpenArticleDetail -> receiver.processOpenArticleDetail(previousState, action)
         is AddArticleToFavorite -> receiver.processAddArticleToFavorite(previousState, action)
