@@ -47,7 +47,7 @@ internal data class ActionElementProvider(
       val baseActionsReducerName = ParameterizedTypeName.get(
         BaseActionsReducer::class.asClassName(),
         stateName,
-        commandName
+        actionType.name
       )
 
       return ActionElementProvider(

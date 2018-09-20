@@ -13,6 +13,7 @@ internal class ActionReducerGenerator(
     return FileSpec.builder(receiverType.packageName, actionElementProvider.reducerName)
       .addType(TypeSpec.classBuilder(actionElementProvider.reducerName)
         .apply { if (actionType.isInternal) addModifiers(KModifier.INTERNAL) }
+        .addSuperinterface(actionElementProvider.baseActionsReducerName)
         .primaryConstructor(FunSpec.constructorBuilder()
           .addModifiers(KModifier.PRIVATE)
           .addParameter(RECEIVER_PARAMETER_NAME, receiverTypeName)
@@ -42,6 +43,7 @@ internal class ActionReducerGenerator(
           .initializer(RECEIVER_PARAMETER_NAME)
           .build())
         .addFunction(FunSpec.builder("reduce")
+          .addModifiers(KModifier.OVERRIDE)
           .addParameter(PREVIOUS_STATE_PARAMETER_NAME, actionElementProvider.stateName)
           .addParameter(ACTION_PARAMETER_NAME, actionType.name)
           .beginControlFlow("return when (action)")
