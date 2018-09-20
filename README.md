@@ -136,6 +136,7 @@ Add a Gradle dependency:
 ```gradle
 apply plugin: 'kotlin-kapt'
 
-implementation 'com.github.rougsig:actions-dispatcher-annotations:1.0.6'
-kapt 'com.github.rougsig:actions-dispatcher-processor:1.0.6'
+implementation 'com.github.rougsig:actions-dispatcher-annotations:1.0.7'
+implementation 'com.github.rougsig:actions-dispatcher-runtime:1.0.7'
+kapt 'com.github.rougsig:actions-dispatcher-processor:1.0.7'
 ```
