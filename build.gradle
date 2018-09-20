@@ -4,8 +4,7 @@ group 'com.github.rougsig.actionsdispatcher'
 version '1.0'
 
 buildscript {
-    ext.kotlin_version = '1.2.61'
-
+    ext.kotlin_version = '1.2.70'
     repositories {
         mavenCentral()
         jcenter()
