@@ -1,6 +1,7 @@
 package com.github.rougsig.actionsdispatcher.processor
 
 import com.github.rougsig.actionsdispatcher.annotations.ActionElement
+import com.github.rougsig.actionsdispatcher.runtime.BaseActionsReducer
 import com.squareup.kotlinpoet.ParameterizedTypeName
 import com.squareup.kotlinpoet.TypeName
 import com.squareup.kotlinpoet.asClassName
@@ -20,7 +21,8 @@ internal data class ActionElementProvider(
   val stateName: TypeName,
   val commandName: TypeName,
   val stateCommandPairName: TypeName,
-  val nullableStateCommandPairName: TypeName
+  val nullableStateCommandPairName: TypeName,
+  val baseActionsReducerName: TypeName
 ) {
   companion object {
     fun get(actionElement: ActionElement, actionType: ActionType, types: Types): ActionElementProvider {
@@ -42,6 +44,12 @@ internal data class ActionElementProvider(
         getNullableCommandTypeName(actionType, types).asNullable()
       )
 
+      val baseActionsReducerName = ParameterizedTypeName.get(
+        BaseActionsReducer::class.asClassName(),
+        stateName,
+        commandName
+      )
+
       return ActionElementProvider(
         prefix,
         receiverName,
@@ -50,7 +58,8 @@ internal data class ActionElementProvider(
         stateName,
         commandName,
         stateCommandPairName,
-        nullableStateCommandPairName
+        nullableStateCommandPairName,
+        baseActionsReducerName
       )
     }
 
