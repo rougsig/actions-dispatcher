@@ -136,6 +136,14 @@ Add a Gradle dependency:
 ```gradle
 apply plugin: 'kotlin-kapt'
 
+sourceSets {
+    main.java.srcDirs += 'src/main/kotlin'
+    main.java.srcDirs += 'build/generated/source/kaptKotlin/main'           // <-- add to your module
+    debug.java.srcDirs += 'build/generated/source/kaptKotlin/debug'         // <-- add to your module
+    release.java.srcDirs += 'build/generated/source/kaptKotlin/release'     // <-- add to your module
+    test.java.srcDirs += 'src/test/kotlin'
+}
+
 implementation 'com.github.rougsig:actions-dispatcher-annotations:1.0.7'
 implementation 'com.github.rougsig:actions-dispatcher-runtime:1.0.7'
 kapt 'com.github.rougsig:actions-dispatcher-processor:1.0.7'
