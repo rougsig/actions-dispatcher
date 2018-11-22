@@ -13,10 +13,16 @@ internal class ActionReceiverGenerator(
         .apply { if (actionType.isInternal) addModifiers(KModifier.INTERNAL) }
         .addFunctions(receiverType.processFunctions.map { (action, funName) ->
           FunSpec.builder(funName)
-            .addModifiers(KModifier.ABSTRACT)
             .addParameter(PREVIOUS_STATE_PARAMETER_NAME, actionElementProvider.stateName)
             .addParameter(ACTION_PARAMETER_NAME, action.asType().asTypeName())
             .returns(actionElementProvider.nullableStateCommandPairName)
+            .apply {
+              if (actionElementProvider.generateDefaultReceiverImplementation) {
+                addCode("return $PREVIOUS_STATE_PARAMETER_NAME to null")
+              } else {
+                addModifiers(KModifier.ABSTRACT)
+              }
+            }
             .build()
         })
         .build())

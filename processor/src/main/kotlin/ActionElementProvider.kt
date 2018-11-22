@@ -2,10 +2,8 @@ package com.github.rougsig.actionsdispatcher.processor
 
 import com.github.rougsig.actionsdispatcher.annotations.ActionElement
 import com.github.rougsig.actionsdispatcher.runtime.BaseActionsReducer
-import com.squareup.kotlinpoet.ParameterizedTypeName
 import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
 import com.squareup.kotlinpoet.TypeName
-import com.squareup.kotlinpoet.asClassName
 import com.squareup.kotlinpoet.asTypeName
 import javax.lang.model.element.AnnotationMirror
 import javax.lang.model.element.AnnotationValue
@@ -23,13 +21,15 @@ internal data class ActionElementProvider(
   val commandName: TypeName,
   val stateCommandPairName: TypeName,
   val nullableStateCommandPairName: TypeName,
-  val baseActionsReducerName: TypeName
+  val baseActionsReducerName: TypeName,
+  val generateDefaultReceiverImplementation: Boolean
 ) {
   companion object {
     fun get(actionElement: ActionElement, actionType: ActionType, types: Types): ActionElementProvider {
       val prefix = actionElement.prefix
       val receiverName = actionElement.receiverName
       val reducerName = actionElement.reducerName
+      val generateDefaultReceiverImplementation = actionElement.generateDefaultReceiverImplementation
       val customReceiverElement = getReceiverElement(actionType, types)
       val stateName = getStateTypeName(actionType, types)
       val commandName = getCommandTypeName(actionType, types)
@@ -60,7 +60,8 @@ internal data class ActionElementProvider(
         commandName,
         stateCommandPairName,
         nullableStateCommandPairName,
-        baseActionsReducerName
+        baseActionsReducerName,
+        generateDefaultReceiverImplementation
       )
     }
 

@@ -11,5 +11,6 @@ annotation class ActionElement(
   val receiverName: String = "ActionReceiver",
   val reducerName: String = "ActionsReducer",
   val receiver: KClass<*> = Nothing::class,
-  val command: KClass<*> = Nothing::class
+  val command: KClass<*> = Nothing::class,
+  val generateDefaultReceiverImplementation: Boolean = false
 )

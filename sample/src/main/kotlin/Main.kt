@@ -2,7 +2,7 @@ package com.github.rougsig.actionsdispatcher.sample
 
 import com.github.rougsig.actionsdispatcher.annotations.ActionElement
 
-@ActionElement(state = State::class)
+@ActionElement(state = State::class, generateDefaultReceiverImplementation = true)
 internal sealed class Action
 
 internal object OpenArticleDetail : Action()
