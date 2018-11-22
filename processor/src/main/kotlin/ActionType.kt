@@ -22,7 +22,7 @@ internal data class ActionType(
   val isInternal: Boolean
 ) {
   val name = element.className
-  val packageName = name.packageName()
+  val packageName = name.packageName
 
   companion object {
     fun get(logger: Logger, elements: Elements, types: Types, element: Element): ActionType? {

@@ -3,6 +3,7 @@ package com.github.rougsig.actionsdispatcher.processor
 import com.github.rougsig.actionsdispatcher.annotations.ActionElement
 import com.github.rougsig.actionsdispatcher.runtime.BaseActionsReducer
 import com.squareup.kotlinpoet.ParameterizedTypeName
+import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
 import com.squareup.kotlinpoet.TypeName
 import com.squareup.kotlinpoet.asClassName
 import com.squareup.kotlinpoet.asTypeName
@@ -32,23 +33,23 @@ internal data class ActionElementProvider(
       val customReceiverElement = getReceiverElement(actionType, types)
       val stateName = getStateTypeName(actionType, types)
       val commandName = getCommandTypeName(actionType, types)
-      val stateCommandPairName = ParameterizedTypeName.get(
-        Pair::class.asClassName(),
-        stateName,
-        commandName
-      )
 
-      val nullableStateCommandPairName = ParameterizedTypeName.get(
-        Pair::class.asClassName(),
-        stateName,
-        getNullableCommandTypeName(actionType, types).asNullable()
-      )
+      val stateCommandPairName =
+        Pair::class.asTypeName()
+          .parameterizedBy(stateName, commandName)
 
-      val baseActionsReducerName = ParameterizedTypeName.get(
-        BaseActionsReducer::class.asClassName(),
-        stateName,
-        actionType.name
-      )
+      val nullableStateCommandPairName =
+        Pair::class.asTypeName()
+          .parameterizedBy(
+            stateName,
+            getNullableCommandTypeName(actionType, types).asNullable()
+          )
+
+      val baseActionsReducerName =
+        BaseActionsReducer::class.asTypeName().parameterizedBy(
+          stateName,
+          actionType.name
+        )
 
       return ActionElementProvider(
         prefix,
@@ -95,7 +96,7 @@ internal data class ActionElementProvider(
       val annotation = actionType.element.getAnnotationMirror(ActionElement::class)
       val receiverValue = annotation!!.getFieldByName(ANNOTATION_COMMAND_FIELD_NAME)
       val receiverTypeMirror = (receiverValue?.value as? TypeMirror)
-        ?: return ParameterizedTypeName.get(Function0::class.asClassName(), actionType.name)
+        ?: return Function0::class.asTypeName().parameterizedBy(actionType.name)
       return (types.asElement(receiverTypeMirror) as TypeElement).asType().asTypeName()
     }
 
@@ -103,7 +104,7 @@ internal data class ActionElementProvider(
       val annotation = actionType.element.getAnnotationMirror(ActionElement::class)
       val receiverValue = annotation!!.getFieldByName(ANNOTATION_COMMAND_FIELD_NAME)
       val receiverTypeMirror = (receiverValue?.value as? TypeMirror)
-        ?: return ParameterizedTypeName.get(Function0::class.asClassName(), actionType.name.asNullable())
+        ?: return Function0::class.asTypeName().parameterizedBy(actionType.name.asNullable())
       return (types.asElement(receiverTypeMirror) as TypeElement).asType().asTypeName()
     }
   }

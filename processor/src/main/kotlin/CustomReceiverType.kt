@@ -40,7 +40,7 @@ internal class CustomReceiverType(
 
       val className = receiverElement.asClassName()
       val canonicalName = className.canonicalName
-      val simpleName = className.simpleName()
+      val simpleName = className.simpleName
       val packageName = actionType.packageName
       val processFunctions = getProcessFunctions(receiverElement)
 
