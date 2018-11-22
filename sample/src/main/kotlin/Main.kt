@@ -1,6 +1,7 @@
 package com.github.rougsig.actionsdispatcher.sample
 
 import com.github.rougsig.actionsdispatcher.annotations.ActionElement
+import com.github.rougsig.actionsdispatcher.runtime.BaseActionsReducer
 
 @ActionElement(state = State::class, generateDefaultReceiverImplementation = true)
 internal sealed class Action
@@ -25,4 +26,3 @@ fun main(args: Array<String>) {
   // TODO add sample
   // Please see readme.md
 }
-
