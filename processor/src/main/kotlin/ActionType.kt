@@ -25,7 +25,7 @@ internal data class ActionType(
   val packageName = name.packageName
 
   companion object {
-    fun get(logger: Logger, elements: Elements, types: Types, element: Element): ActionType? {
+    fun get(logger: Logger, element: Element): ActionType? {
       val typeMetadata = element.kotlinMetadata
       if (element !is TypeElement || typeMetadata !is KotlinClassMetadata) {
         logger.error("@ActionElement can't be applied to $element: must be kotlin class", element)

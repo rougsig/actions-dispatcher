@@ -47,7 +47,7 @@ class Processor : KotlinAbstractProcessor() {
 
   override fun process(annotations: Set<TypeElement>, roundEnv: RoundEnvironment): Boolean {
     for (type in roundEnv.getElementsAnnotatedWith(annotation)) {
-      val actionType = ActionType.get(logger, elementUtils, typeUtils, type) ?: continue
+      val actionType = ActionType.get(logger, type) ?: continue
       val actionElement = type.getAnnotation(annotation)
       val actionElementProvider = ActionElementProvider.get(actionElement, actionType, typeUtils)
       val receiverType = ReceiverType.get(logger, actionType, actionElementProvider) ?: continue

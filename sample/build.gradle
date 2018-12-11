@@ -6,8 +6,8 @@ repositories {
 }
 
 dependencies {
-    implementation project(":annotations")
-    implementation project(':runtime')
-    kapt project(":processor")
+    implementation project(path: ':annotations', configuration: 'default')
+    implementation project(path: ':runtime', configuration: 'default')
+    kapt project(path: ':processor', configuration: 'default')
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
 }
