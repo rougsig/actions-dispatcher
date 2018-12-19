@@ -24,10 +24,10 @@ interface ActionReceiver {
 }
 ```
 
-And `ActionsReducer` with redcuce function:
+And `ActionsReducer` with reduce function:
 ```kotlin
 class ActionsReducer private constructor(private val receiver: ActionReceiver) {
-    fun redcuce(previousState: State, action: Action): Pair<State, Function0<Action?>?> = when (action) {
+    fun reduce(previousState: State, action: Action): Pair<State, Function0<Action?>?> = when (action) {
         is DislikeArticle -> receiver.processDislikeArticle(previousState, action)
         is OpenArticleDetail -> receiver.processOpenArticleDetail(previousState, action)
         is AddArticleToFavorite -> receiver.processAddArticleToFavorite(previousState, action)
@@ -36,15 +36,15 @@ class ActionsReducer private constructor(private val receiver: ActionReceiver) {
 }
 ```
 
-All you have to do after adding an annotation is to use a generated builder which will create this redcucer for you and also you will need to implement a receiver:
+All you have to do after adding an annotation is to use a generated builder which will create this reducer for you and also you will need to implement a receiver:
 ```kotlin
 class MyPresenter : BasePresenter<State, View, Action>(), ActionReceiver {
     private val reducer = ActionsReducer.Builder()
-        .receiver(this) // <-- a class wich implements ActionReceiver and will receive redcuce calls
+        .receiver(this) // <-- a class wich implements ActionReceiver and will receive reduce calls
         .build()
 
     fun reduce(previusState: State, action: Action) {
-        reducer.redcuce(previusState, action)
+        reducer.reduce(previusState, action)
     }
 
     override fun processAddArticleToFavorite(previousState: State, action: Action): Pair<State, Function0<Action?>?> {
