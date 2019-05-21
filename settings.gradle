@@ -1,4 +1,5 @@
-include 'sample'
-include 'processor'
-include 'annotations'
-include 'runtime'
+include ':annotations',
+  ':generator',
+  ':plugin',
+  ':processor',
+  ':runtime'
