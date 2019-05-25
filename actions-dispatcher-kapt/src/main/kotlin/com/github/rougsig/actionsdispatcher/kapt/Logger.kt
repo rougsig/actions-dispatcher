@@ -1,4 +1,4 @@
-package com.github.rougsig.actionsdispatcher.kapt.utils
+package com.github.rougsig.actionsdispatcher.kapt
 
 import javax.annotation.processing.Messager
 import javax.lang.model.element.Element
