@@ -1,5 +1,4 @@
-include ':annotations',
-  ':generator',
-  ':plugin',
-  ':processor',
-  ':runtime'
+include ":actions-dispatcher-compiler",
+  ":actions-dispatcher-idea-plugin",
+  ":actions-dispatcher-kapt",
+  ":actions-dispatcher-runtime"
