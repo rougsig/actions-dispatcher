@@ -17,10 +17,25 @@ object AddArticleToFavorite : Action()
 After doing that you will get an auto-generated `ActionReceiver` interface:
 ```kotlin
 interface ActionReceiver {
-    fun processAddArticleToFavorite(previousState: State, action: AddArticleToFavorite): Pair<State, Function0<Action?>?>
-    fun processDislikeArticle(previousState: State, action: DislikeArticle): Pair<State, Function0<Action?>?>
-    fun processLikeArticle(previousState: State, action: LikeArticle): Pair<State, Function0<Action?>?>
-    fun processOpenArticleDetail(previousState: State, action: OpenArticleDetail): Pair<State, Function0<Action?>?>
+    fun processAddArticleToFavorite(
+        previousState: State, 
+        action: AddArticleToFavorite
+    ): Pair<State, Function0<Action?>?>
+    
+    fun processDislikeArticle(
+        previousState: State, 
+        action: DislikeArticle
+    ): Pair<State, Function0<Action?>?>
+    
+    fun processLikeArticle(
+        previousState: State, 
+        action: LikeArticle
+    ): Pair<State, Function0<Action?>?>
+    
+    fun processOpenArticleDetail(
+        previousState: State, 
+        action: OpenArticleDetail
+    ): Pair<State, Function0<Action?>?>
 }
 ```
 
