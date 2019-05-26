@@ -12,14 +12,18 @@ internal fun buildActionReducer(params: ActionDispatcherGenerator.Params): FileS
       Function0::class
         .asTypeName()
         .parameterizedBy(params.baseActionType.asNullable())
+        .asNullable()
     )
+
+  val baseActionReducerType = BASE_ACTION_REDUCER_TYPE
+    .parameterizedBy(params.stateType, params.baseActionType)
 
   return FileSpec
     .builder(params.packageName, params.reducerName)
     .addType(TypeSpec
       .classBuilder(params.reducerName)
       .apply { if (params.isInternal) addModifiers(KModifier.INTERNAL) }
-      .addSuperinterface(BASE_ACTION_REDUCER_TYPE)
+      .addSuperinterface(baseActionReducerType)
       .primaryConstructor(FunSpec
         .constructorBuilder()
         .addModifiers(KModifier.PRIVATE)

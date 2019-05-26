@@ -77,21 +77,21 @@ class ActionDispatcherProcessor : KotlinAbstractProcessor() {
     val proto = typeMetadata.data.classProto
 
     val actionElementAnnotation = targetElement.getAnnotation(annotation)
-    val baseActionType = targetElement.asClassName()
+
     val packageName = targetElement.asClassName().packageName
+    val reducerName = actionElementAnnotation.reducerName
+    val receiverName = actionElementAnnotation.receiverName
+    val receiverType = ClassName.bestGuess(actionElementAnnotation.receiverName)
+    val baseActionType = targetElement.asClassName()
     val stateType = try {
       actionElementAnnotation.state
       throw IllegalStateException("actionElementAnnotation.state must throw MirroredTypeException")
     } catch (exception: MirroredTypeException) {
       ClassName.bestGuess(exception.typeMirror.toString())
     }
-    val processFunPrefix = actionElementAnnotation.prefix
-    val reducerName = actionElementAnnotation.reducerName
-    val receiverName = actionElementAnnotation.receiverName
-    val receiverType = ClassName.bestGuess(actionElementAnnotation.receiverName)
-    val isDefaultGenerationEnabled = actionElementAnnotation.isDefaultGenerationEnabled
     val isInternal = proto.visibility!! == ProtoBuf.Visibility.INTERNAL
-    val actions = getActions(targetElement, processFunPrefix)
+    val isDefaultGenerationEnabled = actionElementAnnotation.isDefaultGenerationEnabled
+    val actions = getActions(targetElement, actionElementAnnotation.prefix)
 
     return ActionDispatcherGenerator.Params(
       packageName = packageName,

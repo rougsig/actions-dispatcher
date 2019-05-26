@@ -5,9 +5,10 @@ import java.lang.IllegalStateException
 import kotlin.Function0
 import kotlin.Pair
 
-class MyReducer private constructor(private val receiver: MyReceiver) : BaseActionsReducer {
+class MyReducer private constructor(private val receiver: MyReceiver) :
+        BaseActionsReducer<DuckState, DuckAction> {
     override fun reduce(previousState: DuckState, action: DuckAction): Pair<DuckState,
-            Function0<DuckAction?>> = when (action) {
+            Function0<DuckAction?>?> = when (action) {
         is AddDuckToFavorite -> receiver.processAddDuckToFavorite(previousState, action)
         is DislikeDuck -> receiver.processDislikeDuck(previousState, action)
         is LikeDuck -> receiver.processLikeDuck(previousState, action)

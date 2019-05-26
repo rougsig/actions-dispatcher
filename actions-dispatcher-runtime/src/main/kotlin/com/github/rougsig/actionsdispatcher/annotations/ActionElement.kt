@@ -7,8 +7,14 @@ import kotlin.reflect.KClass
 @MustBeDocumented
 annotation class ActionElement(
   val state: KClass<*>,
-  val prefix: String = "process",
-  val reducerName: String = "ActionsReducer",
-  val receiverName: String = "ActionReceiver",
+  val prefix: String = DEFAULT_PREFIX,
+  val reducerName: String = DEFAULT_REDUCER_NAME,
+  val receiverName: String = DEFAULT_RECEIVER_NAME,
   val isDefaultGenerationEnabled: Boolean = false
-)
+) {
+  companion object {
+    const val DEFAULT_PREFIX = "process"
+    const val DEFAULT_REDUCER_NAME = "ActionsReducer"
+    const val DEFAULT_RECEIVER_NAME = "ActionReceiver"
+  }
+}

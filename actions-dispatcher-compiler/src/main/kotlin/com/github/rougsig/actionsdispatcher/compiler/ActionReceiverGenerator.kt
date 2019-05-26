@@ -11,6 +11,7 @@ internal fun buildActionReceiver(params: ActionDispatcherGenerator.Params): File
       Function0::class
         .asTypeName()
         .parameterizedBy(params.baseActionType.asNullable())
+        .asNullable()
     )
 
   return FileSpec
