@@ -7,14 +7,16 @@ apply plugin: "kotlin-kapt"
 apply plugin: "org.jetbrains.intellij"
 apply plugin: "idea"
 
+version VERSION_NAME
+
 intellij {
   version "2019.1.1"
-  pluginName "Test Bytecode Generator"
+  pluginName "ActionsDispatcher LiveGenerator"
   plugins "Kotlin"
 }
 
 patchPluginXml {
-  sinceBuild "171.0"
+  sinceBuild "181.0"
   pluginDescription "IDEA plugin for live actions-dispatcher generation"
 }
 

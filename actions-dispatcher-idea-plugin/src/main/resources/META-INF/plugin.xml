@@ -1,11 +1,12 @@
 <idea-plugin>
   <id>com.github.rougsig.actionsdispatcher.ideaplugin</id>
-  <name>Actions Dispatcher LiveGenerator</name>
+  <name>ActionsDispatcher LiveGenerator</name>
   <vendor email="rougsig@gmail.com">Andrey Stepankov</vendor>
   <description>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Accusantium ad aliquid at autem dolore, ea,
     esse est illo minima, minus nisi odit quaerat qui quis quo recusandae repellat temporibus voluptate.
   </description>
-  <idea-version since-build="171.0"/>
+  <idea-version since-build="181.0"/>
+  <depends>com.intellij.modules.lang</depends>
   <depends>org.jetbrains.kotlin</depends>
 
   <project-components>
