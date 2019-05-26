@@ -1,5 +1,6 @@
 package com.github.rougsig.actionsdispatcher.compiler
 
+import com.github.rougsig.actionsdispatcher.compiler.ActionDispatcherGenerator.BASE_ACTION_REDUCER_TYPE
 import com.squareup.kotlinpoet.*
 import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
 
@@ -46,7 +47,7 @@ internal fun buildActionReducer(params: ActionDispatcherGenerator.Params): FileS
             IllegalStateException::class.java,
             "no target specified, use $RECEIVER_PARAMETER_NAME Builder`s method to set it")
           .endControlFlow()
-          .addStatement("return %S(this.%S!!)", params.reducerName, RECEIVER_PARAMETER_NAME)
+          .addStatement("return %N(this.%N!!)", params.reducerName, RECEIVER_PARAMETER_NAME)
           .returns(ClassName.bestGuess(params.reducerName))
           .build())
         .build())
@@ -63,7 +64,7 @@ internal fun buildActionReducer(params: ActionDispatcherGenerator.Params): FileS
         .apply {
           params.actions.forEach { action ->
             addCode("is ${action.name} -> ")
-            addCode("%T.%S(%S, %S)\n",
+            addCode("%N.%N(%N, %N)\n",
               RECEIVER_PARAMETER_NAME,
               action.processFunName,
               PREVIOUS_STATE_PARAMETER_NAME,

@@ -19,6 +19,7 @@ import javax.annotation.processing.RoundEnvironment
 import javax.lang.model.SourceVersion
 import javax.lang.model.element.TypeElement
 import javax.lang.model.type.DeclaredType
+import javax.lang.model.type.MirroredTypeException
 
 @AutoService(Processor::class)
 class ActionDispatcherProcessor : KotlinAbstractProcessor() {
@@ -76,10 +77,14 @@ class ActionDispatcherProcessor : KotlinAbstractProcessor() {
     val proto = typeMetadata.data.classProto
 
     val actionElementAnnotation = targetElement.getAnnotation(annotation)
-
     val baseActionType = targetElement.asClassName()
     val packageName = targetElement.asClassName().packageName
-    val stateType = ClassName.bestGuess(actionElementAnnotation.state.qualifiedName!!)
+    val stateType = try {
+      actionElementAnnotation.state
+      throw IllegalStateException("actionElementAnnotation.state must throw MirroredTypeException")
+    } catch (exception: MirroredTypeException) {
+      ClassName.bestGuess(exception.typeMirror.toString())
+    }
     val processFunPrefix = actionElementAnnotation.prefix
     val reducerName = actionElementAnnotation.reducerName
     val receiverName = actionElementAnnotation.receiverName

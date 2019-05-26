@@ -1,0 +1,18 @@
+package com.github.rougsig.actionsdispatcher.testmodels.sample
+
+import kotlin.Function0
+import kotlin.Pair
+
+interface ActionReceiver {
+    fun processAddDuckToFavorite(previousState: DuckState, action: AddDuckToFavorite):
+            Pair<DuckState, Function0<DuckAction?>>
+
+    fun processDislikeDuck(previousState: DuckState, action: DislikeDuck): Pair<DuckState,
+            Function0<DuckAction?>>
+
+    fun processLikeDuck(previousState: DuckState, action: LikeDuck): Pair<DuckState,
+            Function0<DuckAction?>>
+
+    fun processOpenDuckDetail(previousState: DuckState, action: OpenDuckDetail): Pair<DuckState,
+            Function0<DuckAction?>>
+}

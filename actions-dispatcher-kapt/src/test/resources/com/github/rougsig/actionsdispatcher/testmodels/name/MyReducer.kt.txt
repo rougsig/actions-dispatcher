@@ -1,0 +1,33 @@
+package com.github.rougsig.actionsdispatcher.testmodels.name
+
+import com.github.rougsig.actionsdispatcher.runtime.BaseActionsReducer
+import java.lang.IllegalStateException
+import kotlin.Function0
+import kotlin.Pair
+
+class MyReducer private constructor(private val receiver: MyReceiver) : BaseActionsReducer {
+    override fun reduce(previousState: DuckState, action: DuckAction): Pair<DuckState,
+            Function0<DuckAction?>> = when (action) {
+        is AddDuckToFavorite -> receiver.processAddDuckToFavorite(previousState, action)
+        is DislikeDuck -> receiver.processDislikeDuck(previousState, action)
+        is LikeDuck -> receiver.processLikeDuck(previousState, action)
+        is OpenDuckDetail -> receiver.processOpenDuckDetail(previousState, action)
+    }
+
+    class Builder {
+        private var receiver: MyReceiver? = null
+
+        fun receiver(receiver: MyReceiver): Builder {
+            this.receiver = receiver
+            return this
+        }
+
+        fun build(): MyReducer {
+            if (this.receiver == null) {
+                throw
+                        IllegalStateException("no target specified, use receiver Builder`s method to set it")
+            }
+            return MyReducer(this.receiver!!)
+        }
+    }
+}
