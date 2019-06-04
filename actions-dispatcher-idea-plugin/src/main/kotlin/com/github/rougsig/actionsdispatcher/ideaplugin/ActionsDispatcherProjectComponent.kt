@@ -5,18 +5,14 @@ import com.github.rougsig.actionsdispatcher.compiler.ActionDispatcherGenerator
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.components.ProjectComponent
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.project.guessProjectDir
+import com.intellij.openapi.roots.ModuleRootManager
 import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.openapi.vfs.VirtualFileEvent
 import com.intellij.openapi.vfs.VirtualFileListener
 import com.intellij.openapi.vfs.VirtualFileManager
-import com.intellij.psi.PsiDirectory
 import com.intellij.psi.PsiManager
 import com.intellij.psi.util.PsiTreeUtil
-import com.intellij.psi.util.parents
 import com.squareup.kotlinpoet.ClassName
-import com.squareup.kotlinpoet.FileSpec
-import com.squareup.kotlinpoet.TypeSpec
 import org.jetbrains.kotlin.idea.util.module
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.KtAnnotationEntry
@@ -27,7 +23,6 @@ import org.jetbrains.kotlin.psi.psiUtil.getSuperNames
 import org.jetbrains.uast.kotlin.KotlinUAnnotation
 import org.jetbrains.uast.toUElement
 import java.io.File
-import java.nio.file.Paths
 
 class ActionsDispatcherProjectComponent(
   private val project: Project
@@ -138,45 +133,22 @@ class ActionsDispatcherProjectComponent(
       .containingDirectory
       .getRootModuleDirectory()
 
-    val outputFolder = Paths
-      .get(
-        dir.virtualFile.presentableUrl,
-        "build",
-        "generated",
-        "source",
-        "kaptKotlin",
-        "main"
-      )
-      .toFile()
-    outputFolder.mkdirs()
+    val outputDirPath = ModuleRootManager.getInstance(ktFile.module!!)
+      .sourceRoots
+      .find { it.presentableUrl.contains("kaptKotlin", ignoreCase = true) }
+      ?.presentableUrl
 
-    writeToDisk(outputFolder, receiverFileSpec)
-    writeToDisk(outputFolder, actionReducerFileSpec)
+    val outputDir = outputDirPath?.let(::File) ?: return
+
+    receiverFileSpec.writeTo(outputDir)
+    actionReducerFileSpec.writeTo(outputDir)
 
     LocalFileSystem.getInstance()
-      .findFileByIoFile(outputFolder)
+      .findFileByIoFile(outputDir)
       ?.refresh(
         /* asynchronous = */ ApplicationManager.getApplication().isReadAccessAllowed,
         /* recursive = */ true
       )
       ?: VirtualFileManager.getInstance().syncRefresh()
-  }
-
-  private fun PsiDirectory.getRootModuleDirectory(): PsiDirectory {
-    val projectDir = project.guessProjectDir()!!
-    val projectDirParents = manager.findDirectory(projectDir)!!.parents().toList()
-    val currentDirParent = parents().toList()
-    val parentsDiff = currentDirParent.minus(projectDirParents).reversed()
-    val moduleDir = projectDir.findChild(module!!.name)
-    return moduleDir
-      ?.let { manager.findDirectory(it)!! }
-      ?: parentsDiff.firstOrNull() as? PsiDirectory
-      ?: manager.findDirectory(projectDir)!!
-  }
-
-  private fun writeToDisk(outputFolder: File, fileSpec: FileSpec) {
-    val fileName = fileSpec.members.filterIsInstance<TypeSpec>().first().name!!
-    val outputDir = File(outputFolder, fileName)
-    fileSpec.writeTo(outputDir)
   }
 }
