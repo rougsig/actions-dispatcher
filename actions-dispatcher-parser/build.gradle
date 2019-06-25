@@ -1,0 +1,11 @@
+apply plugin: "kotlin"
+
+repositories {
+  mavenCentral()
+}
+
+dependencies {
+  implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
+}
+
+apply from: "../gradle/gradle-mvn-push.gradle"
