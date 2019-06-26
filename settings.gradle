@@ -3,5 +3,4 @@ include ":actions-dispatcher-compiler",
   ":actions-dispatcher-kapt",
   ":actions-dispatcher-runtime",
   ":actions-dispatcher-parser",
-  ":actions-dispatcher-entity",
   ":test-models"

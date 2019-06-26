@@ -1,6 +1,5 @@
 package com.github.rougsig.actionsdispatcher.parser
 
-import com.github.rougsig.actionsdispatcher.entity.ActionElementModel
 import junit.framework.TestCase
 
 class ActionElementModelParserTest : TestCase() {
@@ -19,7 +18,7 @@ class ActionElementModelParserTest : TestCase() {
     """.trimIndent()
 
     assertEquals(
-      ActionElementModel(
+      ActionElementModelParser.Model(
         packageName = "com.github.rougsig.actionsdispatcher.testmodels.sample",
         baseClassName = "DuckAction",
         prefix = "process",
@@ -29,7 +28,7 @@ class ActionElementModelParserTest : TestCase() {
         isDefaultGenerationEnabled = false,
         actions = listOf("OpenDuckDetails", "LikeDuck", "AddDuckToFavorite")
       ),
-      parseActionElementModel(source)
+      ActionElementModelParser.parse(source)
     )
   }
 
@@ -48,7 +47,7 @@ class ActionElementModelParserTest : TestCase() {
     """.trimIndent()
 
     assertEquals(
-      ActionElementModel(
+      ActionElementModelParser.Model(
         packageName = "com.github.rougsig.actionsdispatcher.testmodels.sample",
         baseClassName = "DuckAction",
         prefix = "process",
@@ -58,7 +57,7 @@ class ActionElementModelParserTest : TestCase() {
         isDefaultGenerationEnabled = false,
         actions = listOf("OpenDuckDetails", "LikeDuck", "AddDuckToFavorite")
       ),
-      parseActionElementModel(source)
+      ActionElementModelParser.parse(source)
     )
   }
 
@@ -77,7 +76,7 @@ class ActionElementModelParserTest : TestCase() {
     """.trimIndent()
 
     assertEquals(
-      ActionElementModel(
+      ActionElementModelParser.Model(
         packageName = "com.github.rougsig.actionsdispatcher.testmodels.sample",
         baseClassName = "DuckAction",
         prefix = "execute",
@@ -87,7 +86,7 @@ class ActionElementModelParserTest : TestCase() {
         isDefaultGenerationEnabled = false,
         actions = listOf("OpenDuckDetails", "LikeDuck", "AddDuckToFavorite")
       ),
-      parseActionElementModel(source)
+      ActionElementModelParser.parse(source)
     )
   }
 
@@ -106,7 +105,7 @@ class ActionElementModelParserTest : TestCase() {
     """.trimIndent()
 
     assertEquals(
-      ActionElementModel(
+      ActionElementModelParser.Model(
         packageName = "com.github.rougsig.actionsdispatcher.testmodels.sample",
         baseClassName = "DuckAction",
         prefix = "process",
@@ -116,7 +115,7 @@ class ActionElementModelParserTest : TestCase() {
         isDefaultGenerationEnabled = true,
         actions = listOf("OpenDuckDetails", "LikeDuck", "AddDuckToFavorite")
       ),
-      parseActionElementModel(source)
+      ActionElementModelParser.parse(source)
     )
   }
 }
