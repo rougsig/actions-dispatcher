@@ -5,7 +5,9 @@ repositories {
 }
 
 dependencies {
+  implementation project(":actions-dispatcher-entity")
   implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
+  testImplementation "junit:junit:4.12"
 }
 
 apply from: "../gradle/gradle-mvn-push.gradle"
