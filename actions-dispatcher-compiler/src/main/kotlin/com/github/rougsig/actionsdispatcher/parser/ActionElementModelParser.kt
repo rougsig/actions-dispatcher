@@ -8,8 +8,10 @@ object ActionElementModelParser {
     if (!iterator.hasNext()) return null
 
     val packageLine = findPackageLine(iterator) ?: return null
-    val (annotationLine, baseClassLine) = findAnnotationLine(iterator) ?: return null
-    val classDeclarationLines = findClassDeclarationLines(iterator) ?: return null
+    val (annotationLine, baseClassLine) = findAnnotationLine(iterator)
+      ?: return null
+    val classDeclarationLines = findClassDeclarationLines(iterator)
+      ?: return null
 
     val packageName = parsePackageLine(packageLine)
     val annotationParams = parseAnnotationLine(annotationLine)

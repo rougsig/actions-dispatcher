@@ -2,5 +2,4 @@ include ":actions-dispatcher-compiler",
   ":actions-dispatcher-idea-plugin",
   ":actions-dispatcher-kapt",
   ":actions-dispatcher-runtime",
-  ":actions-dispatcher-parser",
   ":test-models"
