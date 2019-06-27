@@ -2,7 +2,7 @@ package com.github.rougsig.actionsdispatcher.parser
 
 import junit.framework.TestCase
 
-class ActionElementModelParserTest : TestCase() {
+internal class ActionElementModelParserTest : TestCase() {
   fun testFindSimpleAnnotationWithoutExtraParameters() {
     val source = """
       package com.github.rougsig.actionsdispatcher.testmodels.sample
@@ -22,7 +22,7 @@ class ActionElementModelParserTest : TestCase() {
         packageName = "com.github.rougsig.actionsdispatcher.testmodels.sample",
         baseClassName = "DuckAction",
         prefix = "process",
-        state = "DuckState",
+        stateClassName = "DuckState",
         reducerName = "ActionsReducer",
         receiverName = "ActionReceiver",
         isDefaultGenerationEnabled = false,
@@ -51,7 +51,7 @@ class ActionElementModelParserTest : TestCase() {
         packageName = "com.github.rougsig.actionsdispatcher.testmodels.sample",
         baseClassName = "DuckAction",
         prefix = "process",
-        state = "DuckState",
+        stateClassName = "DuckState",
         reducerName = "MyReducer",
         receiverName = "MyReceiver",
         isDefaultGenerationEnabled = false,
@@ -80,7 +80,7 @@ class ActionElementModelParserTest : TestCase() {
         packageName = "com.github.rougsig.actionsdispatcher.testmodels.sample",
         baseClassName = "DuckAction",
         prefix = "execute",
-        state = "DuckState",
+        stateClassName = "DuckState",
         reducerName = "ActionsReducer",
         receiverName = "ActionReceiver",
         isDefaultGenerationEnabled = false,
@@ -109,7 +109,7 @@ class ActionElementModelParserTest : TestCase() {
         packageName = "com.github.rougsig.actionsdispatcher.testmodels.sample",
         baseClassName = "DuckAction",
         prefix = "process",
-        state = "DuckState",
+        stateClassName = "DuckState",
         reducerName = "ActionsReducer",
         receiverName = "ActionReceiver",
         isDefaultGenerationEnabled = true,

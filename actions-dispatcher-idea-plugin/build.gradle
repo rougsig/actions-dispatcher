@@ -27,6 +27,6 @@ repositories {
 dependencies {
   implementation project(":actions-dispatcher-runtime")
   implementation project(":actions-dispatcher-compiler")
+  implementation project(":actions-dispatcher-parser")
   implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
-  implementation "com.squareup:kotlinpoet:1.0.0"
 }

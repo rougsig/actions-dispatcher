@@ -85,7 +85,7 @@ class ActionDispatcherProcessor : KotlinAbstractProcessor() {
     val baseActionType = targetElement.asClassName()
     val stateType = try {
       actionElementAnnotation.state
-      throw IllegalStateException("actionElementAnnotation.state must throw MirroredTypeException")
+      throw IllegalStateException("actionElementAnnotation.stateClassName must throw MirroredTypeException")
     } catch (exception: MirroredTypeException) {
       ClassName.bestGuess(exception.typeMirror.toString())
     }

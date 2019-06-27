@@ -67,7 +67,7 @@ internal fun buildActionReducer(params: ActionDispatcherGenerator.Params): FileS
         .beginControlFlow("return when (action)")
         .apply {
           params.actions.forEach { action ->
-            addCode("is ${action.name} -> ")
+            addCode("is %T -> ", action.type)
             addCode("%N.%N(%N, %N)\n",
               RECEIVER_PARAMETER_NAME,
               action.processFunName,

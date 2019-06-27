@@ -20,7 +20,7 @@ object ActionElementModelParser {
       packageName = packageName,
       baseClassName = baseClassName,
 
-      state = annotationParams.getValue("state"),
+      stateClassName = annotationParams["state"] ?: return null,
       prefix = annotationParams.getOrDefault("prefix", "process"),
       reducerName = annotationParams.getOrDefault("reducerName", "ActionsReducer"),
       receiverName = annotationParams.getOrDefault("receiverName", "ActionReceiver"),
@@ -33,8 +33,9 @@ object ActionElementModelParser {
   data class Model(
     val packageName: String,
     val baseClassName: String,
+    val isInternal: Boolean = true,
 
-    val state: String,
+    val stateClassName: String,
     val prefix: String,
     val reducerName: String,
     val receiverName: String,
