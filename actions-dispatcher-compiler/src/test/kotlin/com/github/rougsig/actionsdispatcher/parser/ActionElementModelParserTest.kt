@@ -118,4 +118,64 @@ internal class ActionElementModelParserTest : TestCase() {
       ActionElementModelParser.parse(source)
     )
   }
+
+  fun testFindSimpleAnnotationWithStateImport() {
+    val source = """
+      package com.github.rougsig.actionsdispatcher.testmodels.sample
+      
+      import com.github.rougsig.actionsdispatcher.annotations.ActionElement
+      import com.github.rougsig.actionsdispatcher.annotations.DuckScreen.DuckState
+      
+      @ActionElement(state = DuckState::class, isDefaultGenerationEnabled = true)
+      internal sealed class DuckAction
+
+      internal object OpenDuckDetails : DuckAction()
+      internal class LikeDuck : DuckAction()
+      internal data class AddDuckToFavorite(val duckId: String) : DuckAction()
+    """.trimIndent()
+
+    assertEquals(
+      ActionElementModelParser.Model(
+        packageName = "com.github.rougsig.actionsdispatcher.testmodels.sample",
+        baseClassName = "DuckAction",
+        prefix = "process",
+        stateClassName = "com.github.rougsig.actionsdispatcher.annotations.DuckScreen.DuckState",
+        reducerName = "ActionsReducer",
+        receiverName = "ActionReceiver",
+        isDefaultGenerationEnabled = true,
+        actions = listOf("OpenDuckDetails", "LikeDuck", "AddDuckToFavorite")
+      ),
+      ActionElementModelParser.parse(source)
+    )
+  }
+
+  fun testFindSimpleAnnotationWithStateAliasImport() {
+    val source = """
+      package com.github.rougsig.actionsdispatcher.testmodels.sample
+      
+      import com.github.rougsig.actionsdispatcher.annotations.ActionElement
+      import com.github.rougsig.actionsdispatcher.annotations.DuckScreen.DuckState as VS
+      
+      @ActionElement(state = VS::class, isDefaultGenerationEnabled = true)
+      internal sealed class DuckAction
+
+      internal object OpenDuckDetails : DuckAction()
+      internal class LikeDuck : DuckAction()
+      internal data class AddDuckToFavorite(val duckId: String) : DuckAction()
+    """.trimIndent()
+
+    assertEquals(
+      ActionElementModelParser.Model(
+        packageName = "com.github.rougsig.actionsdispatcher.testmodels.sample",
+        baseClassName = "DuckAction",
+        prefix = "process",
+        stateClassName = "com.github.rougsig.actionsdispatcher.annotations.DuckScreen.DuckState",
+        reducerName = "ActionsReducer",
+        receiverName = "ActionReceiver",
+        isDefaultGenerationEnabled = true,
+        actions = listOf("OpenDuckDetails", "LikeDuck", "AddDuckToFavorite")
+      ),
+      ActionElementModelParser.parse(source)
+    )
+  }
 }

@@ -1,6 +1,7 @@
 package com.github.rougsig.actionsdispatcher.parser
 
 import java.util.*
+import kotlin.collections.HashMap
 
 object ActionElementModelParser {
   fun parse(source: String): Model? {
@@ -8,7 +9,7 @@ object ActionElementModelParser {
     if (!iterator.hasNext()) return null
 
     val packageLine = findPackageLine(iterator) ?: return null
-    val (annotationLine, baseClassLine) = findAnnotationLine(iterator)
+    val (annotationLine, baseClassLine, imports) = findAnnotationLine(iterator)
       ?: return null
     val classDeclarationLines = findClassDeclarationLines(iterator)
       ?: return null
@@ -22,7 +23,7 @@ object ActionElementModelParser {
       packageName = packageName,
       baseClassName = baseClassName,
 
-      stateClassName = annotationParams["state"] ?: return null,
+      stateClassName = imports[annotationParams["state"]] ?: annotationParams["state"] ?: return null,
       prefix = annotationParams.getOrDefault("prefix", "process"),
       reducerName = annotationParams.getOrDefault("reducerName", "ActionsReducer"),
       receiverName = annotationParams.getOrDefault("receiverName", "ActionReceiver"),
@@ -45,7 +46,6 @@ object ActionElementModelParser {
 
     val actions: List<String>
   )
-
 
   private fun parseClassDeclarations(classDeclarationLines: List<String>, baseClassName: String): List<String> {
     val superClassDeclaration = "$baseClassName()"
@@ -80,11 +80,15 @@ object ActionElementModelParser {
     return packageLine.removePrefix("package").trim()
   }
 
-  private fun findAnnotationLine(iterator: Iterator<String>): Pair<String, String>? {
+  private fun findAnnotationLine(iterator: Iterator<String>): Triple<String, String, Map<String, String>>? {
+    val imports = HashMap<String, String>()
     while (iterator.hasNext()) {
       val line = iterator.next()
+      if (line.startsWith("import")) {
+        imports[line.trim().split(' ', '.').last()] = line.removePrefix("import ").trim().split(' ').first()
+      }
       if (line.startsWith("@ActionElement")) {
-        return line to iterator.next()
+        return Triple(line, iterator.next(), imports)
       }
     }
     return null
