@@ -1,18 +1,35 @@
 package com.github.rougsig.actionsdispatcher.compiler
 
+import com.github.rougsig.actionsdispatcher.parser.ActionElementModelParser
 import com.github.rougsig.actionsdispatcher.runtime.BaseActionsReducer
 import com.squareup.kotlinpoet.FileSpec
 import com.squareup.kotlinpoet.TypeName
 import com.squareup.kotlinpoet.asTypeName
+import java.io.File
 
 object ActionDispatcherGenerator {
 
   internal val BASE_ACTION_REDUCER_TYPE = BaseActionsReducer::class.asTypeName()
 
-  fun generateActionReceiver(params: Params): FileSpec = buildActionReceiver(params)
-  fun generateActionReducer(params: Params): FileSpec = buildActionReducer(params)
+  fun process(source: String, outputDir: File): List<String> {
+    val files = process(source)
+    files.forEach { it.writeTo(outputDir) }
+    return files.map { "${outputDir.absolutePath}/${it.packageName.replace(".", "/")}/${it.name}" }
+  }
 
-  data class Params(
+  internal fun process(source: String): List<FileSpec> {
+    val params = ActionElementModelParser.parse(source)?.mapToParams() ?: return emptyList()
+
+    return listOf(
+      generateActionReceiver(params),
+      generateActionReducer(params)
+    )
+  }
+
+  internal fun generateActionReceiver(params: Params): FileSpec = buildActionReceiver(params)
+  internal fun generateActionReducer(params: Params): FileSpec = buildActionReducer(params)
+
+  internal data class Params(
     val packageName: String,
     val reducerName: String,
     val receiverName: String,
@@ -24,10 +41,8 @@ object ActionDispatcherGenerator {
     val actions: List<Action>
   ) {
     data class Action(
-      val name: String,
       val type: TypeName,
       val processFunName: String
     )
   }
-
 }
