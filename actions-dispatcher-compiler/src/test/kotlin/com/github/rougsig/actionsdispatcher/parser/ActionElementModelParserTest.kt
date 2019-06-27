@@ -97,11 +97,11 @@ internal class ActionElementModelParserTest : TestCase() {
       import com.github.rougsig.actionsdispatcher.annotations.ActionElement
       
       @ActionElement(state = DuckState::class, isDefaultGenerationEnabled = true)
-      sealed class DuckAction
+      internal sealed class DuckAction
 
-      object OpenDuckDetails : DuckAction()
-      class LikeDuck : DuckAction()
-      data class AddDuckToFavorite(val duckId: String) : DuckAction()
+      internal object OpenDuckDetails : DuckAction()
+      internal class LikeDuck : DuckAction()
+      internal data class AddDuckToFavorite(val duckId: String) : DuckAction()
     """.trimIndent()
 
     assertEquals(

@@ -63,7 +63,7 @@ object ActionElementModelParser {
   }
 
   private fun parseBaseClassName(baseClassLine: String): String {
-    return baseClassLine.removePrefix("sealed class").trim()
+    return baseClassLine.removePrefix("internal").trim().removePrefix("sealed class").trim()
   }
 
   private fun parseAnnotationLine(annotationLine: String): Map<String, String> {
@@ -102,7 +102,7 @@ object ActionElementModelParser {
     val declarations = LinkedList<String>()
 
     while (iterator.hasNext()) {
-      val line = iterator.next()
+      val line = iterator.next().removePrefix("internal").trim()
       when {
         line.startsWith("object") -> declarations.add(line)
         line.startsWith("data class") -> declarations.add(line)
@@ -112,5 +112,4 @@ object ActionElementModelParser {
 
     return if (declarations.isNotEmpty()) declarations else null
   }
-
 }

@@ -5,12 +5,19 @@ import com.github.rougsig.actionsdispatcher.runtime.BaseActionsReducer
 import com.squareup.kotlinpoet.FileSpec
 import com.squareup.kotlinpoet.TypeName
 import com.squareup.kotlinpoet.asTypeName
+import java.io.File
 
 object ActionDispatcherGenerator {
 
   internal val BASE_ACTION_REDUCER_TYPE = BaseActionsReducer::class.asTypeName()
 
-  fun process(source: String): List<FileSpec> {
+  fun process(source: String, outputDir: File): List<String> {
+    val files = process(source)
+    files.forEach { it.writeTo(outputDir) }
+    return files.map { "${outputDir.absolutePath}/${it.packageName.replace(".", "/")}/${it.name}" }
+  }
+
+  internal fun process(source: String): List<FileSpec> {
     val params = ActionElementModelParser.parse(source)?.mapToParams() ?: return emptyList()
 
     return listOf(
