@@ -2,7 +2,7 @@ package com.github.rougsig.actionsdispatcher.testmodels.generation
 
 import com.github.rougsig.actionsdispatcher.annotations.ActionElement
 
-@ActionElement(state = DuckState::class, isDefaultGenerationEnabled = true)
+@ActionElement(DuckState::class)
 sealed class DuckAction
 
 object OpenDuckDetail : DuckAction()

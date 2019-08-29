@@ -1,6 +1,7 @@
 package com.github.rougsig.actionsdispatcher.compiler
 
 import com.github.rougsig.actionsdispatcher.runtime.BaseActionsReducer
+import com.squareup.kotlinpoet.ClassName
 import com.squareup.kotlinpoet.FileSpec
 import com.squareup.kotlinpoet.TypeName
 import com.squareup.kotlinpoet.asTypeName
@@ -16,8 +17,7 @@ object ActionDispatcherGenerator {
   data class Params(
     val packageName: String,
 
-    val stateType: TypeName,
-    val commandType: TypeName,
+    val stateClassName: ClassName,
     val processFunctionPrefix: String,
     val reducerName: String,
     val receiverName: String,
@@ -25,8 +25,7 @@ object ActionDispatcherGenerator {
     val actions: List<Action>
   ) {
     data class Action(
-      val name: String,
-      val type: TypeName,
+      val className: ClassName,
       val implementationType: ImplementationType
     )
 
