@@ -4,7 +4,7 @@ import kotlin.reflect.KClass
 
 @Retention(AnnotationRetention.SOURCE)
 @Target(AnnotationTarget.CLASS)
-annotation class ActionElement(
+annotation class CopyActionElement(
   val stateType: KClass<*>,
   val commandType: KClass<*>,
   val prefix: String = DEFAULT_PREFIX,

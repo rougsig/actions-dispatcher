@@ -4,9 +4,9 @@ import kotlin.reflect.KClass
 
 @Retention(AnnotationRetention.SOURCE)
 @Target(AnnotationTarget.CLASS)
-annotation class ActionElement(
+annotation class DefaultActionElement(
   val stateType: KClass<*>,
-  val commandType: KClass<*>,
+  val commandTypes: KClass<*>,
   val prefix: String = DEFAULT_PREFIX,
   val reducerName: String = DEFAULT_REDUCER_NAME,
   val receiverName: String = DEFAULT_RECEIVER_NAME

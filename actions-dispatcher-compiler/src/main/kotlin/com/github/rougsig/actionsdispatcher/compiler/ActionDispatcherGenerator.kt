@@ -9,25 +9,31 @@ object ActionDispatcherGenerator {
 
   internal val BASE_ACTION_REDUCER_TYPE = BaseActionsReducer::class.asTypeName()
 
-  fun generateActionReceiver(params: Params): FileSpec = buildActionReceiver(params)
-  fun generateActionReducer(params: Params): FileSpec = buildActionReducer(params)
+  fun generate(params: Params): List<FileSpec> {
+    return emptyList()
+  }
 
   data class Params(
     val packageName: String,
+
+    val stateType: TypeName,
+    val commandType: TypeName,
+    val processFunctionPrefix: String,
     val reducerName: String,
     val receiverName: String,
-    val receiverType: TypeName,
-    val baseActionType: TypeName,
-    val stateType: TypeName,
-    val isInternal: Boolean,
-    val isDefaultGenerationEnabled: Boolean,
+
     val actions: List<Action>
   ) {
     data class Action(
       val name: String,
       val type: TypeName,
-      val processFunName: String
+      val implementationType: ImplementationType
     )
-  }
 
+    enum class ImplementationType {
+      None,
+      Stub,
+      Copy
+    }
+  }
 }
