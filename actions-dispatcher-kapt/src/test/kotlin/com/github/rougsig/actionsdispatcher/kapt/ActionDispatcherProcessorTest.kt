@@ -1,7 +1,7 @@
 package com.github.rougsig.actionsdispatcher.kapt
 
 class ActionDispatcherProcessorTest : APTest("com.github.rougsig.actionsdispatcher.testmodels") {
-  fun testSample() = testProcessor(
+  fun testGeneration() = testProcessor(
     AnnotationProcessor(
       sourceFiles = listOf("DuckAction.java"),
       expectedFiles = listOf(
@@ -10,22 +10,10 @@ class ActionDispatcherProcessorTest : APTest("com.github.rougsig.actionsdispatch
       ),
       processor = ActionDispatcherProcessor()
     ),
-    actualFileLocation = { "${it.path}/sample" }
+    actualFileLocation = { "${it.path}/generation" }
   )
 
-  fun testWithCustomPrefix() = testProcessor(
-    AnnotationProcessor(
-      sourceFiles = listOf("DuckAction.java"),
-      expectedFiles = listOf(
-        "ActionReceiver.kt.txt",
-        "ActionsReducer.kt.txt"
-      ),
-      processor = ActionDispatcherProcessor()
-    ),
-    actualFileLocation = { "${it.path}/prefix" }
-  )
-
-  fun testWithCustomNames() = testProcessor(
+  fun testName() = testProcessor(
     AnnotationProcessor(
       sourceFiles = listOf("DuckAction.java"),
       expectedFiles = listOf(
@@ -37,7 +25,7 @@ class ActionDispatcherProcessorTest : APTest("com.github.rougsig.actionsdispatch
     actualFileLocation = { "${it.path}/name" }
   )
 
-  fun testWithDefaultGeneration() = testProcessor(
+  fun testPrefix() = testProcessor(
     AnnotationProcessor(
       sourceFiles = listOf("DuckAction.java"),
       expectedFiles = listOf(
@@ -46,6 +34,30 @@ class ActionDispatcherProcessorTest : APTest("com.github.rougsig.actionsdispatch
       ),
       processor = ActionDispatcherProcessor()
     ),
-    actualFileLocation = { "${it.path}/generation" }
+    actualFileLocation = { "${it.path}/prefix" }
+  )
+
+  fun testDefault() = testProcessor(
+    AnnotationProcessor(
+      sourceFiles = listOf("DuckAction.java"),
+      expectedFiles = listOf(
+        "ActionReceiver.kt.txt",
+        "ActionsReducer.kt.txt"
+      ),
+      processor = ActionDispatcherProcessor()
+    ),
+    actualFileLocation = { "${it.path}/sample" }
+  )
+
+  fun testCopy() = testProcessor(
+    AnnotationProcessor(
+      sourceFiles = listOf("DuckAction.java"),
+      expectedFiles = listOf(
+        "ActionReceiver.kt.txt",
+        "ActionsReducer.kt.txt"
+      ),
+      processor = ActionDispatcherProcessor()
+    ),
+    actualFileLocation = { "${it.path}/copy" }
   )
 }

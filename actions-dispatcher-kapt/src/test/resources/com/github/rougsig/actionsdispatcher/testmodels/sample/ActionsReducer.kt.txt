@@ -2,17 +2,17 @@ package com.github.rougsig.actionsdispatcher.testmodels.sample
 
 import com.github.rougsig.actionsdispatcher.runtime.BaseActionsReducer
 import java.lang.IllegalStateException
-import kotlin.Function0
 import kotlin.Pair
 
-class ActionsReducer private constructor(private val receiver: ActionReceiver) :
+internal class ActionsReducer private constructor(private val receiver: ActionReceiver) :
         BaseActionsReducer<DuckState, DuckAction> {
-    override fun reduce(previousState: DuckState, action: DuckAction): Pair<DuckState,
-            Function0<DuckAction?>?> = when (action) {
-        is AddDuckToFavorite -> receiver.processAddDuckToFavorite(previousState, action)
-        is DislikeDuck -> receiver.processDislikeDuck(previousState, action)
-        is LikeDuck -> receiver.processLikeDuck(previousState, action)
+    override fun reduce(previousState: DuckState, action: DuckAction): Pair<DuckState, () ->
+            DuckAction?> = when (action) {
         is OpenDuckDetail -> receiver.processOpenDuckDetail(previousState, action)
+        is LikeDuck -> receiver.processLikeDuck(previousState, action)
+        is DislikeDuck -> receiver.processDislikeDuck(previousState, action)
+        is AddDuckToFavorite -> receiver.processAddDuckToFavorite(previousState, action)
+        is UpdateLceState -> receiver.processUpdateLceState(previousState, action)
     }
 
     class Builder {

@@ -1,3 +1,5 @@
 package com.github.rougsig.actionsdispatcher.testmodels.sample
 
-class DuckState
+data class DuckState(
+  val lceState: Any
+)

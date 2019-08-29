@@ -1,4 +1,4 @@
-package com.github.rougsig.actionsdispatcher.testmodels.generation
+package com.github.rougsig.actionsdispatcher.testmodels.copy
 
 import com.github.rougsig.actionsdispatcher.runtime.BaseActionsReducer
 import java.lang.IllegalStateException

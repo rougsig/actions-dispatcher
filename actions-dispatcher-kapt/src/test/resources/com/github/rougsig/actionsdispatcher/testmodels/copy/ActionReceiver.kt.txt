@@ -1,8 +1,8 @@
-package com.github.rougsig.actionsdispatcher.testmodels.name
+package com.github.rougsig.actionsdispatcher.testmodels.copy
 
 import kotlin.Pair
 
-internal interface MyReceiver {
+internal interface ActionReceiver {
     fun processOpenDuckDetail(previousState: DuckState, action: OpenDuckDetail): Pair<DuckState,
             () -> DuckAction?>
 
@@ -16,5 +16,6 @@ internal interface MyReceiver {
             Pair<DuckState, () -> DuckAction?>
 
     fun processUpdateLceState(previousState: DuckState, action: UpdateLceState): Pair<DuckState,
-            () -> DuckAction?>
-}
+            () -> DuckAction?> = previousState.copy(
+        lceState = action.lceState
+    ) to null}

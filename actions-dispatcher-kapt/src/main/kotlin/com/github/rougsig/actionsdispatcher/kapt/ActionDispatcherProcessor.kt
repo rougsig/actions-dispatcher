@@ -10,10 +10,11 @@ import com.squareup.kotlinpoet.ClassName
 import com.squareup.kotlinpoet.FileSpec
 import com.squareup.kotlinpoet.asClassName
 import me.eugeniomarletti.kotlin.metadata.KotlinClassMetadata
+import me.eugeniomarletti.kotlin.metadata.kaptGeneratedOption
 import me.eugeniomarletti.kotlin.metadata.kotlinMetadata
 import me.eugeniomarletti.kotlin.metadata.shadow.metadata.deserialization.NameResolver
+import me.eugeniomarletti.kotlin.processing.KotlinAbstractProcessor
 import java.io.File
-import javax.annotation.processing.AbstractProcessor
 import javax.annotation.processing.RoundEnvironment
 import javax.lang.model.SourceVersion
 import javax.lang.model.element.TypeElement
@@ -22,10 +23,7 @@ import javax.lang.model.type.MirroredTypeException
 import kotlin.reflect.KClass
 
 @AutoService(ActionDispatcherProcessor::class)
-class ActionDispatcherProcessor : AbstractProcessor() {
-  private val generatedDir: File
-    get() = processingEnv.options[KAPT_GENERATED_OPTION].let(::File)
-
+class ActionDispatcherProcessor : KotlinAbstractProcessor() {
   private val actionElementAnnotationClass = ActionElement::class.java
   private val copyActionElementAnnotationClass = CopyActionElement::class.java
   private val defaultActionElementAnnotationClass = DefaultActionElement::class.java
@@ -43,7 +41,7 @@ class ActionDispatcherProcessor : AbstractProcessor() {
   }
 
   override fun getSupportedOptions(): Set<String> {
-    return setOf(KAPT_GENERATED_OPTION)
+    return setOf(kaptGeneratedOption)
   }
 
   override fun process(annotations: Set<TypeElement>, roundEnv: RoundEnvironment): Boolean {
@@ -52,40 +50,85 @@ class ActionDispatcherProcessor : AbstractProcessor() {
       val annotation = targetElement.getAnnotation(actionElementAnnotationClass)
       val params = parseParams(
         targetElement,
-        annotation::stateType.asClassName(),
+        annotation::stateType.asTypeElement(),
         annotation.prefix,
         annotation.reducerName,
-        annotation.receiverName,
-        ImplementationType.None
-      )
+        annotation.receiverName
+      ) { action, _ ->
+        val metadata = action.kotlinMetadata as KotlinClassMetadata
+        val proto = metadata.data.classProto
+        val nameResolver = metadata.data.nameResolver
+
+        proto.sealedSubclassFqNameList.map { nameRes ->
+          val actionSubclassName = nameResolver.getClassName(nameRes)
+
+          ActionDispatcherGenerator.Params.Action(
+            className = actionSubclassName,
+            implementationType = ImplementationType.None
+          )
+        }
+      }
       ActionDispatcherGenerator.generate(params).forEach { it.writeToGeneratedDir() }
     }
 
     roundEnv.getElementsAnnotatedWith(copyActionElementAnnotationClass).forEach { element ->
       val targetElement = element as TypeElement
-      val annotation = targetElement.getAnnotation(actionElementAnnotationClass)
+      val annotation = targetElement.getAnnotation(copyActionElementAnnotationClass)
       val params = parseParams(
         targetElement,
-        annotation::stateType.asClassName(),
+        annotation::stateType.asTypeElement(),
         annotation.prefix,
         annotation.reducerName,
-        annotation.receiverName,
-        ImplementationType.Copy
-      )
+        annotation.receiverName
+      ) { action, state ->
+        val actionMetadata = action.kotlinMetadata as KotlinClassMetadata
+        val actionProto = actionMetadata.data.classProto
+        val actionNameResolver = actionMetadata.data.nameResolver
+
+        val stateMetadata = state.kotlinMetadata as KotlinClassMetadata
+        val stateProto = stateMetadata.data.classProto
+        val stateNameResolver = stateMetadata.data.nameResolver
+
+        actionProto.sealedSubclassFqNameList.map { nameRes ->
+          val actionSubclassName = actionNameResolver.getClassName(nameRes)
+          val fieldName = actionSubclassName.simpleName.removePrefix("Update").let {
+            it.take(1).toLowerCase() + it.drop(1)
+          }
+          val hasFieldInViewState = stateProto.constructorOrBuilderList.firstOrNull()
+            ?.valueParameterList?.find { stateNameResolver.getString(it.name) == fieldName } != null
+
+          ActionDispatcherGenerator.Params.Action(
+            className = actionSubclassName,
+            implementationType = if (hasFieldInViewState) ImplementationType.Copy(fieldName) else ImplementationType.None
+          )
+        }
+      }
       ActionDispatcherGenerator.generate(params).forEach { it.writeToGeneratedDir() }
     }
 
     roundEnv.getElementsAnnotatedWith(defaultActionElementAnnotationClass).forEach { element ->
       val targetElement = element as TypeElement
-      val annotation = targetElement.getAnnotation(actionElementAnnotationClass)
+      val annotation = targetElement.getAnnotation(defaultActionElementAnnotationClass)
       val params = parseParams(
         targetElement,
-        annotation::stateType.asClassName(),
+        annotation::stateType.asTypeElement(),
         annotation.prefix,
         annotation.reducerName,
-        annotation.receiverName,
-        ImplementationType.Stub
-      )
+        annotation.receiverName
+      ) { action, _ ->
+        val metadata = action.kotlinMetadata as KotlinClassMetadata
+        val proto = metadata.data.classProto
+        val nameResolver = metadata.data.nameResolver
+
+        proto.sealedSubclassFqNameList.map { nameRes ->
+          val actionSubclassName = nameResolver.getClassName(nameRes)
+
+          ActionDispatcherGenerator.Params.Action(
+            className = actionSubclassName,
+            implementationType = ImplementationType.Stub
+          )
+        }
+      }
       ActionDispatcherGenerator.generate(params).forEach { it.writeToGeneratedDir() }
     }
 
@@ -96,43 +139,33 @@ class ActionDispatcherProcessor : AbstractProcessor() {
     return ClassName.bestGuess(getQualifiedClassName(index).replace("/", "."))
   }
 
-  private fun (() -> KClass<*>).asClassName(): ClassName {
+  private fun (() -> KClass<*>).asTypeElement(): TypeElement {
     return try {
-      this().asClassName()
+      (elementUtils.getTypeElement(this().qualifiedName!!).asType() as DeclaredType).asElement() as TypeElement
     } catch (mte: MirroredTypeException) {
-      ((mte.typeMirror as DeclaredType).asElement() as TypeElement).asClassName()
+      (mte.typeMirror as DeclaredType).asElement() as TypeElement
     }
   }
 
   private fun parseParams(
     targetElement: TypeElement,
-    stateClassName: ClassName,
+    stateElement: TypeElement,
     prefix: String,
     reducerName: String,
     receiverName: String,
-    implementationType: ImplementationType
+    actionsParser: (action: TypeElement, state: TypeElement) -> List<ActionDispatcherGenerator.Params.Action>
   ): ActionDispatcherGenerator.Params {
-    val className = targetElement.asClassName()
-    val packageName = className.packageName
-
-    val metadata = targetElement.kotlinMetadata as KotlinClassMetadata
-    val proto = metadata.data.classProto
-    val nameResolver = metadata.data.nameResolver
-    val actions = proto.sealedSubclassFqNameList.map { nameRes ->
-      val actionClassName = nameResolver.getClassName(nameRes)
-
-      ActionDispatcherGenerator.Params.Action(
-        className = actionClassName,
-        implementationType = implementationType
-      )
-    }
+    val actionClassName = targetElement.asClassName()
+    val packageName = actionClassName.packageName
+    val actions = actionsParser(targetElement, stateElement)
 
     return ActionDispatcherGenerator.Params(
       packageName,
-      stateClassName,
+      stateElement.asClassName(),
       prefix,
       reducerName,
       receiverName,
+      actionClassName,
       actions
     )
   }
@@ -145,5 +178,3 @@ class ActionDispatcherProcessor : AbstractProcessor() {
     file.writeText(toString())
   }
 }
-
-private const val KAPT_GENERATED_OPTION = "kapt.kotlin.generated"
