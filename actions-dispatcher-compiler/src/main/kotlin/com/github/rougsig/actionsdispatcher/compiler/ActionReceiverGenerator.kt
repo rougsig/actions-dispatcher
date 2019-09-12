@@ -1,50 +1,46 @@
 package com.github.rougsig.actionsdispatcher.compiler
 
 import com.github.rougsig.actionsdispatcher.compiler.ActionDispatcherGenerator.Params.ImplementationType.*
-import com.squareup.kotlinpoet.*
-import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
 
-internal fun generateActionReceiver(params: ActionDispatcherGenerator.Params): FileSpec {
-  val returnType = Pair::class
-    .asTypeName()
-    .parameterizedBy(
-      params.stateClassName,
-      LambdaTypeName.get(returnType = params.actionClassName.copy(nullable = true))
-    )
+internal fun generateActionReceiver(params: ActionDispatcherGenerator.Params): ActionDispatcherGenerator.File {
+  val sb = StringBuilder()
 
-  return FileSpec
-    .builder(params.packageName, params.receiverName)
-    .addType(TypeSpec
-      .interfaceBuilder(params.receiverName)
-      .addModifiers(KModifier.INTERNAL)
-      .addFunctions(params.actions.map { action ->
-        FunSpec
-          .builder("${params.processFunctionPrefix}${action.className.simpleName}")
-          .addParameter(PREVIOUS_STATE_PARAMETER_NAME, params.stateClassName)
-          .addParameter(ACTION_PARAMETER_NAME, action.className)
-          .returns(returnType)
-          .apply {
-            when (val implementationType = action.implementationType) {
-              is None -> {
-                addModifiers(KModifier.ABSTRACT)
-              }
-              is Stub -> {
-                addCode("return $PREVIOUS_STATE_PARAMETER_NAME to null")
-              }
-              is Copy -> {
-                addCode("""
-                  |return $PREVIOUS_STATE_PARAMETER_NAME.copy(
-                  |    ${implementationType.fieldName} = action.${implementationType.fieldName}
-                  |) to null
-                """.trimMargin())
-              }
-            }
-          }
-          .build()
-      })
-      .build())
-    .build()
+  with(params) {
+    sb.appendln("package $packageName")
+    sb.appendln()
+    sb.appendln("import ${stateClassName.canonicalName}")
+    sb.appendln("import ${actionClassName.canonicalName}")
+    actions.forEach { action -> sb.appendln("import ${action.className.canonicalName}") }
+    sb.appendln()
+    sb.appendln("internal interface $receiverName {")
+    actions.forEachIndexed { index, action ->
+      sb.indent().appendln("fun $processFunctionPrefix${action.className.simpleName}(")
+      sb.indent(2).appendln("previousState: ${stateClassName.simpleName},")
+      sb.indent(2).appendln("action: ${action.className.simpleName}")
+      sb.indent().append("): Pair<${stateClassName.simpleName}, (() -> ${actionClassName.simpleName}?)?>")
+      when (val impl = action.implementationType) {
+        is None -> sb.appendln()
+        is Stub -> {
+          sb.appendln(" {")
+          sb.indent(2).appendln("return previousState to null")
+          sb.indent().appendln("}")
+        }
+        is Copy -> {
+          sb.appendln(" {")
+          sb.indent(2).appendln("return previousState.copy(")
+          sb.indent(3).appendln("${impl.fieldName} = action.${impl.fieldName}")
+          sb.indent(2).appendln(") to null")
+          sb.indent().appendln("}")
+        }
+      }
+      if (index != actions.lastIndex) sb.appendln()
+    }
+    sb.appendln("}")
+  }
+
+  return ActionDispatcherGenerator.File(
+    params.receiverName,
+    params.packageName,
+    sb.toString()
+  )
 }
-
-private const val PREVIOUS_STATE_PARAMETER_NAME = "previousState"
-private const val ACTION_PARAMETER_NAME = "action"

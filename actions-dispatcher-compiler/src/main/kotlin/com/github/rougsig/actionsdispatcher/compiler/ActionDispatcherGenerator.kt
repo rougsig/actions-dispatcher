@@ -2,14 +2,13 @@ package com.github.rougsig.actionsdispatcher.compiler
 
 import com.github.rougsig.actionsdispatcher.runtime.BaseActionsReducer
 import com.squareup.kotlinpoet.ClassName
-import com.squareup.kotlinpoet.FileSpec
 import com.squareup.kotlinpoet.asTypeName
 
 object ActionDispatcherGenerator {
 
   internal val BASE_ACTION_REDUCER_TYPE = BaseActionsReducer::class.asTypeName()
 
-  fun generate(params: Params): List<FileSpec> {
+  fun generate(params: Params): List<File> {
     return listOf(
       generateActionReceiver(params),
       generateActionReducer(params)
@@ -38,4 +37,10 @@ object ActionDispatcherGenerator {
       data class Copy(val fieldName: String) : ImplementationType()
     }
   }
+
+  data class File(
+    val name: String,
+    val packageName: String,
+    val text: String
+  )
 }

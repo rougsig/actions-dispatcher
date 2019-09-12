@@ -5,9 +5,7 @@ import com.github.rougsig.actionsdispatcher.annotations.CopyActionElement
 import com.github.rougsig.actionsdispatcher.annotations.DefaultActionElement
 import com.github.rougsig.actionsdispatcher.compiler.ActionDispatcherGenerator
 import com.github.rougsig.actionsdispatcher.compiler.ActionDispatcherGenerator.Params.ImplementationType
-import com.google.auto.service.AutoService
 import com.squareup.kotlinpoet.ClassName
-import com.squareup.kotlinpoet.FileSpec
 import com.squareup.kotlinpoet.asClassName
 import me.eugeniomarletti.kotlin.metadata.KotlinClassMetadata
 import me.eugeniomarletti.kotlin.metadata.kaptGeneratedOption
@@ -22,7 +20,6 @@ import javax.lang.model.type.DeclaredType
 import javax.lang.model.type.MirroredTypeException
 import kotlin.reflect.KClass
 
-@AutoService(ActionDispatcherProcessor::class)
 class ActionDispatcherProcessor : KotlinAbstractProcessor() {
   private val actionElementAnnotationClass = ActionElement::class.java
   private val copyActionElementAnnotationClass = CopyActionElement::class.java
@@ -170,11 +167,11 @@ class ActionDispatcherProcessor : KotlinAbstractProcessor() {
     )
   }
 
-  private fun FileSpec.writeToGeneratedDir() {
+  private fun ActionDispatcherGenerator.File.writeToGeneratedDir() {
     val outputDirPath = "$generatedDir/${packageName.replace(".", "/")}"
     val outputDir = File(outputDirPath).also { it.mkdirs() }
 
     val file = File(outputDir, "$name.kt")
-    file.writeText(toString())
+    file.writeText(text)
   }
 }

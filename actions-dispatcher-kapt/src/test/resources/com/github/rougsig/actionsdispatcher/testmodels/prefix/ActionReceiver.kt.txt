@@ -1,20 +1,36 @@
 package com.github.rougsig.actionsdispatcher.testmodels.prefix
 
-import kotlin.Pair
+import com.github.rougsig.actionsdispatcher.testmodels.prefix.DuckState
+import com.github.rougsig.actionsdispatcher.testmodels.prefix.DuckAction
+import com.github.rougsig.actionsdispatcher.testmodels.prefix.OpenDuckDetail
+import com.github.rougsig.actionsdispatcher.testmodels.prefix.LikeDuck
+import com.github.rougsig.actionsdispatcher.testmodels.prefix.DislikeDuck
+import com.github.rougsig.actionsdispatcher.testmodels.prefix.AddDuckToFavorite
+import com.github.rougsig.actionsdispatcher.testmodels.prefix.UpdateLceState
 
 internal interface ActionReceiver {
-    fun executeOpenDuckDetail(previousState: DuckState, action: OpenDuckDetail): Pair<DuckState,
-            () -> DuckAction?>
+  fun executeOpenDuckDetail(
+    previousState: DuckState,
+    action: OpenDuckDetail
+  ): Pair<DuckState, (() -> DuckAction?)?>
 
-    fun executeLikeDuck(previousState: DuckState, action: LikeDuck): Pair<DuckState, () ->
-            DuckAction?>
+  fun executeLikeDuck(
+    previousState: DuckState,
+    action: LikeDuck
+  ): Pair<DuckState, (() -> DuckAction?)?>
 
-    fun executeDislikeDuck(previousState: DuckState, action: DislikeDuck): Pair<DuckState, () ->
-            DuckAction?>
+  fun executeDislikeDuck(
+    previousState: DuckState,
+    action: DislikeDuck
+  ): Pair<DuckState, (() -> DuckAction?)?>
 
-    fun executeAddDuckToFavorite(previousState: DuckState, action: AddDuckToFavorite):
-            Pair<DuckState, () -> DuckAction?>
+  fun executeAddDuckToFavorite(
+    previousState: DuckState,
+    action: AddDuckToFavorite
+  ): Pair<DuckState, (() -> DuckAction?)?>
 
-    fun executeUpdateLceState(previousState: DuckState, action: UpdateLceState): Pair<DuckState,
-            () -> DuckAction?>
+  fun executeUpdateLceState(
+    previousState: DuckState,
+    action: UpdateLceState
+  ): Pair<DuckState, (() -> DuckAction?)?>
 }

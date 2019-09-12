@@ -1,15 +1,46 @@
 package com.github.rougsig.actionsdispatcher.testmodels.sample
 
-import kotlin.Pair
+import com.github.rougsig.actionsdispatcher.testmodels.sample.DuckState
+import com.github.rougsig.actionsdispatcher.testmodels.sample.DuckAction
+import com.github.rougsig.actionsdispatcher.testmodels.sample.OpenDuckDetail
+import com.github.rougsig.actionsdispatcher.testmodels.sample.LikeDuck
+import com.github.rougsig.actionsdispatcher.testmodels.sample.DislikeDuck
+import com.github.rougsig.actionsdispatcher.testmodels.sample.AddDuckToFavorite
+import com.github.rougsig.actionsdispatcher.testmodels.sample.UpdateLceState
 
 internal interface ActionReceiver {
-    fun processOpenDuckDetail(previousState: DuckState, action: OpenDuckDetail): Pair<DuckState,
-            () -> DuckAction?> = previousState to null
-    fun processLikeDuck(previousState: DuckState, action: LikeDuck): Pair<DuckState, () ->
-            DuckAction?> = previousState to null
-    fun processDislikeDuck(previousState: DuckState, action: DislikeDuck): Pair<DuckState, () ->
-            DuckAction?> = previousState to null
-    fun processAddDuckToFavorite(previousState: DuckState, action: AddDuckToFavorite):
-            Pair<DuckState, () -> DuckAction?> = previousState to null
-    fun processUpdateLceState(previousState: DuckState, action: UpdateLceState): Pair<DuckState,
-            () -> DuckAction?> = previousState to null}
+  fun processOpenDuckDetail(
+    previousState: DuckState,
+    action: OpenDuckDetail
+  ): Pair<DuckState, (() -> DuckAction?)?> {
+    return previousState to null
+  }
+
+  fun processLikeDuck(
+    previousState: DuckState,
+    action: LikeDuck
+  ): Pair<DuckState, (() -> DuckAction?)?> {
+    return previousState to null
+  }
+
+  fun processDislikeDuck(
+    previousState: DuckState,
+    action: DislikeDuck
+  ): Pair<DuckState, (() -> DuckAction?)?> {
+    return previousState to null
+  }
+
+  fun processAddDuckToFavorite(
+    previousState: DuckState,
+    action: AddDuckToFavorite
+  ): Pair<DuckState, (() -> DuckAction?)?> {
+    return previousState to null
+  }
+
+  fun processUpdateLceState(
+    previousState: DuckState,
+    action: UpdateLceState
+  ): Pair<DuckState, (() -> DuckAction?)?> {
+    return previousState to null
+  }
+}

@@ -1,34 +1,40 @@
 package com.github.rougsig.actionsdispatcher.testmodels.prefix
 
 import com.github.rougsig.actionsdispatcher.runtime.BaseActionsReducer
-import java.lang.IllegalStateException
-import kotlin.Pair
+import com.github.rougsig.actionsdispatcher.testmodels.prefix.DuckState
+import com.github.rougsig.actionsdispatcher.testmodels.prefix.DuckAction
+import com.github.rougsig.actionsdispatcher.testmodels.prefix.OpenDuckDetail
+import com.github.rougsig.actionsdispatcher.testmodels.prefix.LikeDuck
+import com.github.rougsig.actionsdispatcher.testmodels.prefix.DislikeDuck
+import com.github.rougsig.actionsdispatcher.testmodels.prefix.AddDuckToFavorite
+import com.github.rougsig.actionsdispatcher.testmodels.prefix.UpdateLceState
 
-internal class ActionsReducer private constructor(private val receiver: ActionReceiver) :
-        BaseActionsReducer<DuckState, DuckAction> {
-    override fun reduce(previousState: DuckState, action: DuckAction): Pair<DuckState, () ->
-            DuckAction?> = when (action) {
-        is OpenDuckDetail -> receiver.executeOpenDuckDetail(previousState, action)
-        is LikeDuck -> receiver.executeLikeDuck(previousState, action)
-        is DislikeDuck -> receiver.executeDislikeDuck(previousState, action)
-        is AddDuckToFavorite -> receiver.executeAddDuckToFavorite(previousState, action)
-        is UpdateLceState -> receiver.executeUpdateLceState(previousState, action)
+internal class ActionsReducer private constructor(
+  private val receiver: ActionReceiver
+) : BaseActionsReducer<DuckState, DuckAction> {
+  override fun reduce(
+    previousState: DuckState,
+    action: DuckAction
+  ): Pair<DuckState, (() -> DuckAction?)?> {
+    return when (action) {
+      is OpenDuckDetail -> receiver.executeOpenDuckDetail(previousState, action)
+      is LikeDuck -> receiver.executeLikeDuck(previousState, action)
+      is DislikeDuck -> receiver.executeDislikeDuck(previousState, action)
+      is AddDuckToFavorite -> receiver.executeAddDuckToFavorite(previousState, action)
+      is UpdateLceState -> receiver.executeUpdateLceState(previousState, action)
+    }
+  }
+
+  class Builder {
+    private var receiver: ActionReceiver? = null
+
+    fun receiver(receiver: ActionReceiver) = apply {
+      this.receiver = receiver
     }
 
-    class Builder {
-        private var receiver: ActionReceiver? = null
-
-        fun receiver(receiver: ActionReceiver): Builder {
-            this.receiver = receiver
-            return this
-        }
-
-        fun build(): ActionsReducer {
-            if (this.receiver == null) {
-                throw
-                        IllegalStateException("no target specified, use receiver Builder`s method to set it")
-            }
-            return ActionsReducer(this.receiver!!)
-        }
+    fun build(): ActionsReducer {
+      checkNotNull(receiver) { "no target specified, use receiver Builder`s method to set it" }
+      return ActionsReducer(receiver!!)
     }
+  }
 }

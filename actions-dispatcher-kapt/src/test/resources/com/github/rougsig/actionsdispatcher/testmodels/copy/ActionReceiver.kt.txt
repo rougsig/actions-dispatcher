@@ -1,21 +1,40 @@
 package com.github.rougsig.actionsdispatcher.testmodels.copy
 
-import kotlin.Pair
+import com.github.rougsig.actionsdispatcher.testmodels.copy.DuckState
+import com.github.rougsig.actionsdispatcher.testmodels.copy.DuckAction
+import com.github.rougsig.actionsdispatcher.testmodels.copy.OpenDuckDetail
+import com.github.rougsig.actionsdispatcher.testmodels.copy.LikeDuck
+import com.github.rougsig.actionsdispatcher.testmodels.copy.DislikeDuck
+import com.github.rougsig.actionsdispatcher.testmodels.copy.AddDuckToFavorite
+import com.github.rougsig.actionsdispatcher.testmodels.copy.UpdateLceState
 
 internal interface ActionReceiver {
-    fun processOpenDuckDetail(previousState: DuckState, action: OpenDuckDetail): Pair<DuckState,
-            () -> DuckAction?>
+  fun processOpenDuckDetail(
+    previousState: DuckState,
+    action: OpenDuckDetail
+  ): Pair<DuckState, (() -> DuckAction?)?>
 
-    fun processLikeDuck(previousState: DuckState, action: LikeDuck): Pair<DuckState, () ->
-            DuckAction?>
+  fun processLikeDuck(
+    previousState: DuckState,
+    action: LikeDuck
+  ): Pair<DuckState, (() -> DuckAction?)?>
 
-    fun processDislikeDuck(previousState: DuckState, action: DislikeDuck): Pair<DuckState, () ->
-            DuckAction?>
+  fun processDislikeDuck(
+    previousState: DuckState,
+    action: DislikeDuck
+  ): Pair<DuckState, (() -> DuckAction?)?>
 
-    fun processAddDuckToFavorite(previousState: DuckState, action: AddDuckToFavorite):
-            Pair<DuckState, () -> DuckAction?>
+  fun processAddDuckToFavorite(
+    previousState: DuckState,
+    action: AddDuckToFavorite
+  ): Pair<DuckState, (() -> DuckAction?)?>
 
-    fun processUpdateLceState(previousState: DuckState, action: UpdateLceState): Pair<DuckState,
-            () -> DuckAction?> = previousState.copy(
-        lceState = action.lceState
-    ) to null}
+  fun processUpdateLceState(
+    previousState: DuckState,
+    action: UpdateLceState
+  ): Pair<DuckState, (() -> DuckAction?)?> {
+    return previousState.copy(
+      lceState = action.lceState
+    ) to null
+  }
+}

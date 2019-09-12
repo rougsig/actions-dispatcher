@@ -1,20 +1,36 @@
 package com.github.rougsig.actionsdispatcher.testmodels.name
 
-import kotlin.Pair
+import com.github.rougsig.actionsdispatcher.testmodels.name.DuckState
+import com.github.rougsig.actionsdispatcher.testmodels.name.DuckAction
+import com.github.rougsig.actionsdispatcher.testmodels.name.OpenDuckDetail
+import com.github.rougsig.actionsdispatcher.testmodels.name.LikeDuck
+import com.github.rougsig.actionsdispatcher.testmodels.name.DislikeDuck
+import com.github.rougsig.actionsdispatcher.testmodels.name.AddDuckToFavorite
+import com.github.rougsig.actionsdispatcher.testmodels.name.UpdateLceState
 
 internal interface MyReceiver {
-    fun processOpenDuckDetail(previousState: DuckState, action: OpenDuckDetail): Pair<DuckState,
-            () -> DuckAction?>
+  fun processOpenDuckDetail(
+    previousState: DuckState,
+    action: OpenDuckDetail
+  ): Pair<DuckState, (() -> DuckAction?)?>
 
-    fun processLikeDuck(previousState: DuckState, action: LikeDuck): Pair<DuckState, () ->
-            DuckAction?>
+  fun processLikeDuck(
+    previousState: DuckState,
+    action: LikeDuck
+  ): Pair<DuckState, (() -> DuckAction?)?>
 
-    fun processDislikeDuck(previousState: DuckState, action: DislikeDuck): Pair<DuckState, () ->
-            DuckAction?>
+  fun processDislikeDuck(
+    previousState: DuckState,
+    action: DislikeDuck
+  ): Pair<DuckState, (() -> DuckAction?)?>
 
-    fun processAddDuckToFavorite(previousState: DuckState, action: AddDuckToFavorite):
-            Pair<DuckState, () -> DuckAction?>
+  fun processAddDuckToFavorite(
+    previousState: DuckState,
+    action: AddDuckToFavorite
+  ): Pair<DuckState, (() -> DuckAction?)?>
 
-    fun processUpdateLceState(previousState: DuckState, action: UpdateLceState): Pair<DuckState,
-            () -> DuckAction?>
+  fun processUpdateLceState(
+    previousState: DuckState,
+    action: UpdateLceState
+  ): Pair<DuckState, (() -> DuckAction?)?>
 }
