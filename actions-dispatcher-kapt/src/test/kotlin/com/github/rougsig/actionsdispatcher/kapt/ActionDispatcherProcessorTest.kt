@@ -53,8 +53,8 @@ class ActionDispatcherProcessorTest : APTest("com.github.rougsig.actionsdispatch
     AnnotationProcessor(
       sourceFiles = listOf("DuckAction.java"),
       expectedFiles = listOf(
-        "ActionReceiver.kt.txt",
-        "ActionsReducer.kt.txt"
+        "ActionsReducer.kt.txt",
+        "ActionReceiver.kt.txt"
       ),
       processor = ActionDispatcherProcessor()
     ),

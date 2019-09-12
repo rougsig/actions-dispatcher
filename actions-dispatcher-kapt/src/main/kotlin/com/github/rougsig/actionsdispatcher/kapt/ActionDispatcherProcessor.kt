@@ -12,12 +12,12 @@ import me.eugeniomarletti.kotlin.metadata.kaptGeneratedOption
 import me.eugeniomarletti.kotlin.metadata.kotlinMetadata
 import me.eugeniomarletti.kotlin.metadata.shadow.metadata.deserialization.NameResolver
 import me.eugeniomarletti.kotlin.processing.KotlinAbstractProcessor
-import java.io.File
 import javax.annotation.processing.RoundEnvironment
 import javax.lang.model.SourceVersion
 import javax.lang.model.element.TypeElement
 import javax.lang.model.type.DeclaredType
 import javax.lang.model.type.MirroredTypeException
+import javax.tools.StandardLocation
 import kotlin.reflect.KClass
 
 class ActionDispatcherProcessor : KotlinAbstractProcessor() {
@@ -65,7 +65,7 @@ class ActionDispatcherProcessor : KotlinAbstractProcessor() {
           )
         }
       }
-      ActionDispatcherGenerator.generate(params).forEach { it.writeToGeneratedDir() }
+      ActionDispatcherGenerator.generate(params).forEach { it.writeToGeneratedDir(element) }
     }
 
     roundEnv.getElementsAnnotatedWith(copyActionElementAnnotationClass).forEach { element ->
@@ -100,7 +100,7 @@ class ActionDispatcherProcessor : KotlinAbstractProcessor() {
           )
         }
       }
-      ActionDispatcherGenerator.generate(params).forEach { it.writeToGeneratedDir() }
+      ActionDispatcherGenerator.generate(params).forEach { it.writeToGeneratedDir(element) }
     }
 
     roundEnv.getElementsAnnotatedWith(defaultActionElementAnnotationClass).forEach { element ->
@@ -126,7 +126,7 @@ class ActionDispatcherProcessor : KotlinAbstractProcessor() {
           )
         }
       }
-      ActionDispatcherGenerator.generate(params).forEach { it.writeToGeneratedDir() }
+      ActionDispatcherGenerator.generate(params).forEach { it.writeToGeneratedDir(element) }
     }
 
     return true
@@ -167,11 +167,18 @@ class ActionDispatcherProcessor : KotlinAbstractProcessor() {
     )
   }
 
-  private fun ActionDispatcherGenerator.File.writeToGeneratedDir() {
-    val outputDirPath = "$generatedDir/${packageName.replace(".", "/")}"
-    val outputDir = File(outputDirPath).also { it.mkdirs() }
-
-    val file = File(outputDir, "$name.kt")
-    file.writeText(text)
+  private fun ActionDispatcherGenerator.File.writeToGeneratedDir(element: TypeElement) {
+    filer
+      .createResource(
+        StandardLocation.SOURCE_OUTPUT,
+        packageName,
+        "$name.kt",
+        element
+      )
+      .openWriter()
+      .apply {
+        write(text)
+        flush()
+      }
   }
 }

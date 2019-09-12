@@ -8,6 +8,7 @@ import com.google.testing.compile.JavaFileObjects
 import junit.framework.TestCase
 import java.io.File
 import java.nio.file.Paths
+import javax.tools.StandardLocation
 
 private const val TEST_MODELS_STUB_DIR = "test-models/build/tmp/kapt3/stubs/main"
 private const val TEST_RESOURCES_DIR = "src/test/resources"
@@ -40,7 +41,7 @@ abstract class APTest(
 
       val compilation = Compiler.javac()
         .withProcessors(proc)
-        .withOptions(ImmutableList.of("-Akapt.kotlin.generated=$generationDir", "-proc:only"))
+        .withOptions(ImmutableList.of("-proc:only"))
         .compile(sources.map {
           val stub = File(stubs, it).toURI().toURL()
           JavaFileObjects.forResource(stub)
@@ -56,43 +57,15 @@ abstract class APTest(
       } else {
         CompilationSubject
           .assertThat(compilation)
-          .succeeded()
-
-        val targetDir =
-          File(actualFileLocation(if (enforcePackage) File("${generationDir.absolutePath}/$packageNameDir")
-          else generationDir))
-
-        if (expectedFiles != null) {
-          assertEquals(expectedFiles.size, targetDir.listFiles().size)
-
-          expectedFiles.forEach { fileName ->
-            val expectedFile = File(actualFileLocation(expectedDir), fileName)
-            val actualFile = targetDir
-              .listFiles()
-              .find { it.name == expectedFile.nameWithoutExtension }
-              ?: throw IllegalStateException(
-                "expected file not generated: $fileName\n" +
-                  "Generated files:\n    ${targetDir.listFiles().joinToString("\n    ")}"
-              )
-            assertEquals(
-              expectedFile.nameWithoutExtension,
-              actualFile.name
-            )
-            assertSameLines(
-              expectedFile.readText(),
-              actualFile.readText()
-            )
+          .apply {
+            expectedFiles?.forEach { fileName ->
+              val expectedFile = File(actualFileLocation(expectedDir), fileName)
+              val path = "${actualFileLocation(File(packageName.replace(".", "/")))}/${expectedFile.nameWithoutExtension}"
+              generatedFile(StandardLocation.SOURCE_OUTPUT, path)
+            }
           }
-        }
+          .succeeded()
       }
     }
-  }
-
-  private fun assertSameLines(expected: String, actual: String) {
-    fun String.convertLineSeparators() = replace("\r\n", "\n")
-    assertEquals(
-      expected.trim().convertLineSeparators(),
-      actual.trim().convertLineSeparators()
-    )
   }
 }
