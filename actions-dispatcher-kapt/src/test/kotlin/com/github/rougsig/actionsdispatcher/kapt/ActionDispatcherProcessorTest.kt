@@ -1,6 +1,10 @@
 package com.github.rougsig.actionsdispatcher.kapt
 
 class ActionDispatcherProcessorTest : APTest("com.github.rougsig.actionsdispatcher.testmodels") {
+  init {
+    ActionDispatcherProcessor.IN_TESTS = true
+  }
+
   fun testGeneration() = testProcessor(
     AnnotationProcessor(
       sourceFiles = listOf("DuckAction.java"),

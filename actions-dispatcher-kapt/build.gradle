@@ -12,7 +12,7 @@ dependencies {
   implementation Deps.KOTLIN_STD
   implementation Deps.KOTLIN_REFLECT
   implementation Deps.KOTLINPOET
-  implementation Deps.KOTLIN_METADATA
+  implementation Deps.KOTLINPOET_METADATA
 
   testImplementation Deps.JUNIT
   testImplementation Deps.COMPILE_TESTING
