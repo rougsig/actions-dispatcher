@@ -1,18 +1,21 @@
-apply plugin: "kotlin"
-
-group "com.github.rougsig.actionsdispatcher"
-
 buildscript {
-  ext.kotlin_version = "1.3.50"
   repositories {
     mavenCentral()
     jcenter()
   }
 
   dependencies {
-    classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+    classpath Deps.KOTLIN_GRADLE
   }
 }
+
+plugins {
+  id "com.github.ben-manes.versions" version "0.29.0"
+}
+
+apply plugin: "kotlin"
+
+group "com.github.rougsig.actionsdispatcher"
 
 allprojects {
   repositories {

@@ -3,7 +3,7 @@ apply plugin: "kotlin-kapt"
 
 dependencies {
   implementation project(":actions-dispatcher-runtime")
-  implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
+  implementation Deps.KOTLIN_STD
 
   kapt project(":actions-dispatcher-kapt")
 }

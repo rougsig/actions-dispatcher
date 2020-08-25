@@ -9,13 +9,13 @@ dependencies {
   implementation project(":actions-dispatcher-runtime")
   implementation project(":actions-dispatcher-compiler")
 
-  implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
-  implementation "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
-  implementation "com.squareup:kotlinpoet:1.0.0"
-  implementation "me.eugeniomarletti.kotlin.metadata:kotlin-metadata:1.4.0"
+  implementation Deps.KOTLIN_STD
+  implementation Deps.KOTLIN_REFLECT
+  implementation Deps.KOTLINPOET
+  implementation Deps.KOTLIN_METADATA
 
-  testImplementation "junit:junit:4.12"
-  testImplementation "com.google.testing.compile:compile-testing:0.15"
+  testImplementation Deps.JUNIT
+  testImplementation Deps.COMPILE_TESTING
   testImplementation project(":test-models")
 }
 

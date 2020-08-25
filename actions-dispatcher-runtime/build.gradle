@@ -5,7 +5,7 @@ repositories {
 }
 
 dependencies {
-  implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
+  implementation Deps.KOTLIN_STD
 }
 
 apply from: "../gradle/gradle-mvn-push.gradle"
