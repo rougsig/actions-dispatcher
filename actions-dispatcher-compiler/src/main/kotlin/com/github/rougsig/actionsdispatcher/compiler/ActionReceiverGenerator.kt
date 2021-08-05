@@ -6,36 +6,36 @@ internal fun generateActionReceiver(params: ActionDispatcherGenerator.Params): A
   val sb = StringBuilder()
 
   with(params) {
-    sb.appendln("package $packageName")
-    sb.appendln()
-    sb.appendln("import ${stateClassName.canonicalName}")
-    sb.appendln("import ${actionClassName.canonicalName}")
-    actions.forEach { action -> sb.appendln("import ${action.className.canonicalName}") }
-    sb.appendln()
-    sb.appendln("internal interface $receiverName {")
+    sb.appendLine("package $packageName")
+    sb.appendLine()
+    sb.appendLine("import ${stateClassName.canonicalName}")
+    sb.appendLine("import ${actionClassName.canonicalName}")
+    actions.forEach { action -> sb.appendLine("import ${action.className.canonicalName}") }
+    sb.appendLine()
+    sb.appendLine("internal interface $receiverName {")
     actions.forEachIndexed { index, action ->
-      sb.indent().appendln("fun $processFunctionPrefix${action.className.simpleName}(")
-      sb.indent(2).appendln("previousState: ${stateClassName.simpleName},")
-      sb.indent(2).appendln("action: ${action.className.simpleName}")
+      sb.indent().appendLine("fun $processFunctionPrefix${action.className.simpleName}(")
+      sb.indent(2).appendLine("previousState: ${stateClassName.simpleName},")
+      sb.indent(2).appendLine("action: ${action.className.simpleName}")
       sb.indent().append("): Pair<${stateClassName.simpleName}, (() -> ${actionClassName.simpleName}?)?>")
       when (val impl = action.implementationType) {
-        is None -> sb.appendln()
+        is None -> sb.appendLine()
         is Stub -> {
-          sb.appendln(" {")
-          sb.indent(2).appendln("return previousState to null")
-          sb.indent().appendln("}")
+          sb.appendLine(" {")
+          sb.indent(2).appendLine("return previousState to null")
+          sb.indent().appendLine("}")
         }
         is Copy -> {
-          sb.appendln(" {")
-          sb.indent(2).appendln("return previousState.copy(")
-          sb.indent(3).appendln("${impl.fieldName} = action.${impl.fieldName}")
-          sb.indent(2).appendln(") to null")
-          sb.indent().appendln("}")
+          sb.appendLine(" {")
+          sb.indent(2).appendLine("return previousState.copy(")
+          sb.indent(3).appendLine("${impl.fieldName} = action.${impl.fieldName}")
+          sb.indent(2).appendLine(") to null")
+          sb.indent().appendLine("}")
         }
       }
-      if (index != actions.lastIndex) sb.appendln()
+      if (index != actions.lastIndex) sb.appendLine()
     }
-    sb.appendln("}")
+    sb.appendLine("}")
   }
 
   return ActionDispatcherGenerator.File(
